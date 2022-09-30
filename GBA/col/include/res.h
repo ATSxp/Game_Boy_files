@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include "../source/sprites/intro_msg.h"
+#include "../source/sprites/intro_logo.h"
 #include "../source/sprites/spr_player.h"
 #include "../source/sprites/spr_coin.h"
 #include "../source/sprites/tileset.h"

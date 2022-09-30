@@ -25,7 +25,7 @@ BUILD		:= build
 SOURCES		:= source source/sprites source/maps
 INCLUDES	:= include
 DATA		:=
-MUSIC		:= #audio
+MUSIC		:= audio
 
 #---------------------------------------------------------------------------------
 # options for code generation

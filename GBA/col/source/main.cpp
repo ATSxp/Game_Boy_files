@@ -1,12 +1,13 @@
-#include "tonc.h"
-#include <cstdlib>
-#include <stdlib.h>
+#include <tonc.h>
+#include <maxmod.h>
 
 #include "../include/res.h"
 #include "../include/void.h"
+#include "soundbank.h"
+#include "soundbank_bin.h"
 
 enum States{
-    MENU, SLIDE, GAME
+    INTRO, MENU, SLIDE, GAME
 };
 
 int max_slides = 0;
@@ -14,13 +15,21 @@ int max_slides = 0;
 #define SLEEP(time) VBlankIntrDelay(time * 60)
 #define loadSlides(index) loadBmp16(slide_##index); max_slides++;
 
-int STATE = MENU;
+int STATE = INTRO;
 int slides_count = 1;
 
 // Get a tile id on map
 u8 mget(int x, int y, cu16 *bg){
     return bg[y * MAP1_WIDTH + x];
 }
+
+mm_sound_effect get_coin = {
+    { SFX_GET_COIN }, 
+    (int)(1.0f * (1<<10)),
+    0,
+    255,
+    127,
+};
 
 class Ent{
     private:
@@ -114,6 +123,7 @@ void updateCoinAndPlayer(){
         coin.y = 16 * ( qran_range(16, 144) / 16 );
         p_get_coin = true;
         p_get_coin_anim_t = max_pgcat; 
+        mmEffectEx(&get_coin);
     }
 
     if( p_get_coin_anim_t <= 0 ){
@@ -161,20 +171,28 @@ void winCopy(){
     REG_WIN0V = ( player.y - player.h ) << 8 | ( ( player.y - player.h ) + 48 );
 }
 
+int intro_imgs = 0;
+void initIntro(){
+    switch(intro_imgs){
+        case 0:
+            loadBmp16(intro_msg);
+            break;
+        case 1:
+            loadBmp16(intro_logo);
+            break;
+    }
+
+    setMode( DCNT_MODE3 | DCNT_BG2 );
+}
+
 void initMenu(){
     loadBmp16(title);
-
     setMode( DCNT_MODE3 | DCNT_BG2 );
     tte_init_bmp_default(3);
 
     tte_write("#{P:104, 130}");
-    tte_write("Play");
-}
 
-void nextSlide(){
-    slides_count++;
-    RegisterRamReset(RESET_VRAM);
-    RegisterRamReset(RESET_PALETTE);
+    tte_write("Play");
 }
 
 void initSlide(){
@@ -211,7 +229,6 @@ void initSlide(){
 void initGame(){
     // Reset all graphics
     RegisterRamReset(RESET_VRAM);
-    RegisterRamReset(RESET_PALETTE);
     RegisterRamReset(RESET_OAM);
 
     // Load all graphics
@@ -253,33 +270,51 @@ void updateGame(){
 }
 
 int main(){
-    refresh:
-
     irq_init(NULL);
-    irq_add(II_VBLANK, NULL);
+    irq_add(II_VBLANK, mmVBlank);
+    mmInitDefault( (mm_addr)soundbank_bin, 8 );
 
-    if( STATE == MENU ){
+    refresh:
+    if( STATE == INTRO ){
+        initIntro();
+    }else if( STATE == MENU ){
+        mmStart( MOD_FLATOUTLIES, MM_PLAY_LOOP );
+        mmSetModuleVolume(70);
         initMenu();
     }else if( STATE == SLIDE ){
         initSlide();
-
+        mmStop();
     }else if( STATE == GAME ){
+        mmStart( MOD_FLATOUTLIES, MM_PLAY_LOOP );
+        mmSetModuleVolume(50);
         initGame();
     }
 
     while(true){
+        mmFrame();
         VBlankIntrWait();
         key_poll();
         TICK++;
 
-        if( STATE == MENU ){
+        if( STATE == INTRO ){
+            if( TICK % 130 == 0 ){
+                intro_imgs++;
+                goto refresh;
+            }
+
+            if( intro_imgs > 1 ){
+                STATE = MENU;
+                goto refresh;
+            }
+        }else if( STATE == MENU ){
             if( key_hit( KEY_ANY ) ){
                 STATE = SLIDE;
                 goto refresh;    
             }
+
         }else if( STATE == SLIDE ){
             if( key_hit( KEY_A ) ){ 
-                nextSlide();
+                slides_count++;
                 goto refresh; 
             }else if( slides_count > max_slides ){
                 STATE = GAME;
