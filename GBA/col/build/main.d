@@ -18,6 +18,13 @@ main.o: C:/Users/ATS/Documents/C/GBA/col/source/main.cpp \
  c:\users\ats\documents\c\gba\col\source\sprites\spr_player.h \
  c:\users\ats\documents\c\gba\col\source\sprites\spr_coin.h \
  c:\users\ats\documents\c\gba\col\source\sprites\tileset.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\title.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\slide_1.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\slide_2.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\slide_3.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\slide_4.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\slide_5.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\slide_6.h \
  c:\users\ats\documents\c\gba\col\source\maps\map1.h \
  c:\users\ats\documents\c\gba\col\include\void.h
 C:/devkitPro/libtonc/include/tonc.h:
@@ -39,5 +46,12 @@ c:\users\ats\documents\c\gba\col\include\res.h:
 c:\users\ats\documents\c\gba\col\source\sprites\spr_player.h:
 c:\users\ats\documents\c\gba\col\source\sprites\spr_coin.h:
 c:\users\ats\documents\c\gba\col\source\sprites\tileset.h:
+c:\users\ats\documents\c\gba\col\source\sprites\title.h:
+c:\users\ats\documents\c\gba\col\source\sprites\slide_1.h:
+c:\users\ats\documents\c\gba\col\source\sprites\slide_2.h:
+c:\users\ats\documents\c\gba\col\source\sprites\slide_3.h:
+c:\users\ats\documents\c\gba\col\source\sprites\slide_4.h:
+c:\users\ats\documents\c\gba\col\source\sprites\slide_5.h:
+c:\users\ats\documents\c\gba\col\source\sprites\slide_6.h:
 c:\users\ats\documents\c\gba\col\source\maps\map1.h:
 c:\users\ats\documents\c\gba\col\include\void.h:

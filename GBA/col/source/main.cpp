@@ -1,14 +1,21 @@
 #include "tonc.h"
 #include <cstdlib>
+#include <stdlib.h>
 
 #include "../include/res.h"
 #include "../include/void.h"
 
 enum States{
-    MENU, GAME
+    MENU, SLIDE, GAME
 };
 
-#define STATE GAME
+int max_slides = 0;
+
+#define SLEEP(time) VBlankIntrDelay(time * 60)
+#define loadSlides(index) loadBmp16(slide_##index); max_slides++;
+
+int STATE = MENU;
+int slides_count = 1;
 
 // Get a tile id on map
 u8 mget(int x, int y, cu16 *bg){
@@ -90,14 +97,38 @@ class Ent{
 
 };
 
-Ent player( 16, 16);
+Ent player( 7 * 16, 4 * 16 );
 int p_dir = 0;
+bool p_get_coin = false;
+uint max_pgcat = 40; 
+int p_get_coin_anim_t = max_pgcat; 
 
-Ent coin( 32, 16);
+Ent coin( 8 * 16, 4 * 16 );
 
 int anim_coin[8] = {4, 5, 6, 7, 8, 9, 10, 11};
 
 void updateCoinAndPlayer(){
+    if( player.x == coin.x && player.y == coin.y ){	
+        nocash_puts("> Player get a coin <");
+        coin.x = 16 * ( qran_range(16, 224) / 16 );
+        coin.y = 16 * ( qran_range(16, 144) / 16 );
+        p_get_coin = true;
+        p_get_coin_anim_t = max_pgcat; 
+    }
+
+    if( p_get_coin_anim_t <= 0 ){
+        p_get_coin = false;
+    }else {
+        player.dx = 0;
+        player.dy = 0;
+        p_get_coin_anim_t--;
+    }
+
+    if( p_get_coin ){
+        player.setId(3);
+    }
+
+    if( !p_get_coin ){
     if( key_is_down( KEY_UP ) ){
         player.move(0, -16);
         p_dir = 1;
@@ -119,37 +150,88 @@ void updateCoinAndPlayer(){
     coin.setId(anim_coin[ ( ( TICK / 12 ) % 4 )]);
     player.setId(p_dir);
 
-    if( player.x == coin.x && player.y == coin.y ){
-            int rx = ( rand() % 240 ) / 16;
-            int ry = ( rand() % 160 ) / 16;
-
-            if( rx > 1 && rx < 14 ){
-                coin.x = 16 * rx;
-            }
-
-            if( ry > 1 && ry < 9 ){
-                coin.y = 16 * ry;
-            }
     }
 
     player.update(10);
     coin.update();
 }
 
+void winCopy(){
+    REG_WIN0H = ( player.x - player.w ) << 8 | ( ( player.x - player.w ) + 48 );
+    REG_WIN0V = ( player.y - player.h ) << 8 | ( ( player.y - player.h ) + 48 );
+}
+
+void initMenu(){
+    loadBmp16(title);
+
+    setMode( DCNT_MODE3 | DCNT_BG2 );
+    tte_init_bmp_default(3);
+
+    tte_write("#{P:104, 130}");
+    tte_write("Play");
+}
+
+void nextSlide(){
+    slides_count++;
+    RegisterRamReset(RESET_VRAM);
+    RegisterRamReset(RESET_PALETTE);
+}
+
+void initSlide(){
+    switch(slides_count){
+        case 1:
+            loadSlides(1);
+            nocash_puts("slide [1]");
+            break;
+        case 2:
+            loadSlides(2);
+            nocash_puts("slide [2]");
+            break;
+        case 3:
+            loadSlides(3);
+            nocash_puts("slide [3]");
+            break;
+        case 4:
+            loadSlides(4);
+            nocash_puts("slide [4]");
+            break;
+        case 5:
+            loadSlides(5);
+            nocash_puts("slide [5]");
+            break;
+        case 6:
+            loadSlides(6);
+            nocash_puts("slide [6]");
+            break;
+    }
+
+    setMode( DCNT_MODE3 | DCNT_BG2 );
+}
+
 void initGame(){
+    // Reset all graphics
     RegisterRamReset(RESET_VRAM);
     RegisterRamReset(RESET_PALETTE);
     RegisterRamReset(RESET_OAM);
 
+    // Load all graphics
     loadSprite8(spr_player, 0);
     loadSprite8(spr_coin, 16);
     loadTileset8(tileset, 0, 0);
     loadMap(bg0, MAP1_LENGTH, 30, 0);
+    loadMap(bg1, MAP1_LENGTH, 20, 0);
 
     initOam();
 
+    // Enable mode and background
     REG_BG0CNT = BG_CBB( 0 ) | BG_SBB( 30 ) | BG_8BPP | BG_REG_32x32;
-    setMode( DCNT_MODE0 | DCNT_BG0 | DCNT_OBJ | DCNT_OBJ_1D );
+    REG_BG1CNT = BG_CBB( 0 ) | BG_SBB( 20 ) | BG_8BPP | BG_REG_32x32;
+    setMode( DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_OBJ | DCNT_OBJ_1D | DCNT_WIN0 | DCNT_WIN1);
+
+    REG_WININ = WININ_BUILD(WIN_BG0 | WIN_OBJ, WIN_BG1);
+    winCopy();
+    REG_WIN1H = 0 | 240;
+    REG_WIN1V = 0 | 160;
 
     player.id = 0;
     coin.id = 4;
@@ -158,17 +240,29 @@ void initGame(){
     coin.draw();
 }
 
+int bg_x = 0, bg_y = 0;
 void updateGame(){
     updateCoinAndPlayer();
+    winCopy();
+
+    bg_x++;
+    bg_y++;
+
+    REG_BG1HOFS = -bg_x;
+    REG_BG1VOFS = -bg_y;
 }
 
 int main(){
+    refresh:
 
     irq_init(NULL);
     irq_add(II_VBLANK, NULL);
 
     if( STATE == MENU ){
-    
+        initMenu();
+    }else if( STATE == SLIDE ){
+        initSlide();
+
     }else if( STATE == GAME ){
         initGame();
     }
@@ -179,7 +273,18 @@ int main(){
         TICK++;
 
         if( STATE == MENU ){
-
+            if( key_hit( KEY_ANY ) ){
+                STATE = SLIDE;
+                goto refresh;    
+            }
+        }else if( STATE == SLIDE ){
+            if( key_hit( KEY_A ) ){ 
+                nextSlide();
+                goto refresh; 
+            }else if( slides_count > max_slides ){
+                STATE = GAME;
+                goto refresh;
+            }
         }else if( STATE == GAME ){
             updateGame();
         }

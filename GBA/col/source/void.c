@@ -8,8 +8,6 @@ OBJ_ATTR obj_buffer[128]; // Buffer de Objetos, até 128
 
 void initVoid(){
     vid_vsync();
-    /* VBlankIntrWait(); */
-
     key_poll();
     TICK++;
 }

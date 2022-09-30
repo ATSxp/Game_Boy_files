@@ -26,7 +26,7 @@ typedef struct Entity{
     OBJ_ATTR *sprite;
 } Entity;
 
-void initVoid(); // Inicia a "Engine", chamando o Vsync e o Registro dos botões
+void initVoid(); // Inicia a "Engine"
 void initOam(); // inicia a OAM definindo o limite de Objetos na OAM (default: LIMIT_OBJS = 128)
 void initEnt(Entity *o, int x, int y); // Inicia uma Entidade
 
