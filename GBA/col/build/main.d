@@ -22,6 +22,7 @@ main.o: C:/Users/ATS/Documents/C/GBA/col/source/main.cpp \
  c:\users\ats\documents\c\gba\col\source\sprites\spr_player.h \
  c:\users\ats\documents\c\gba\col\source\sprites\spr_coin.h \
  c:\users\ats\documents\c\gba\col\source\sprites\tileset.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\text_box.h \
  c:\users\ats\documents\c\gba\col\source\sprites\title.h \
  c:\users\ats\documents\c\gba\col\source\sprites\slide_1.h \
  c:\users\ats\documents\c\gba\col\source\sprites\slide_2.h \
@@ -29,6 +30,7 @@ main.o: C:/Users/ATS/Documents/C/GBA/col/source/main.cpp \
  c:\users\ats\documents\c\gba\col\source\sprites\slide_4.h \
  c:\users\ats\documents\c\gba\col\source\sprites\slide_5.h \
  c:\users\ats\documents\c\gba\col\source\sprites\slide_6.h \
+ c:\users\ats\documents\c\gba\col\source\sprites\game_over.h \
  c:\users\ats\documents\c\gba\col\source\maps\map1.h \
  c:\users\ats\documents\c\gba\col\include\void.h \
  C:/Users/ATS/Documents/C/GBA/col/build/soundbank.h \
@@ -56,6 +58,7 @@ c:\users\ats\documents\c\gba\col\source\sprites\intro_logo.h:
 c:\users\ats\documents\c\gba\col\source\sprites\spr_player.h:
 c:\users\ats\documents\c\gba\col\source\sprites\spr_coin.h:
 c:\users\ats\documents\c\gba\col\source\sprites\tileset.h:
+c:\users\ats\documents\c\gba\col\source\sprites\text_box.h:
 c:\users\ats\documents\c\gba\col\source\sprites\title.h:
 c:\users\ats\documents\c\gba\col\source\sprites\slide_1.h:
 c:\users\ats\documents\c\gba\col\source\sprites\slide_2.h:
@@ -63,6 +66,7 @@ c:\users\ats\documents\c\gba\col\source\sprites\slide_3.h:
 c:\users\ats\documents\c\gba\col\source\sprites\slide_4.h:
 c:\users\ats\documents\c\gba\col\source\sprites\slide_5.h:
 c:\users\ats\documents\c\gba\col\source\sprites\slide_6.h:
+c:\users\ats\documents\c\gba\col\source\sprites\game_over.h:
 c:\users\ats\documents\c\gba\col\source\maps\map1.h:
 c:\users\ats\documents\c\gba\col\include\void.h:
 C:/Users/ATS/Documents/C/GBA/col/build/soundbank.h:

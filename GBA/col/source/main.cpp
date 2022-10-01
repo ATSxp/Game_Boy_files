@@ -6,22 +6,19 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
+using namespace std;
+
 enum States{
-    INTRO, MENU, SLIDE, GAME
+    INTRO, MENU, SLIDE, GAME, GAME_OVER
 };
 
 int max_slides = 0;
 
-#define SLEEP(time) VBlankIntrDelay(time * 60)
+/* #define SLEEP(time) VBlankIntrDelay(time * 60) */
 #define loadSlides(index) loadBmp16(slide_##index); max_slides++;
 
 int STATE = INTRO;
 int slides_count = 1;
-
-// Get a tile id on map
-u8 mget(int x, int y, cu16 *bg){
-    return bg[y * MAP1_WIDTH + x];
-}
 
 mm_sound_effect get_coin = {
     { SFX_GET_COIN }, 
@@ -106,15 +103,23 @@ class Ent{
 
 };
 
+int TIMER = 60;
+
 Ent player( 7 * 16, 4 * 16 );
-int p_dir = 0;
-bool p_get_coin = false;
 uint max_pgcat = 40; 
-int p_get_coin_anim_t = max_pgcat; 
+int p_dir = 0, p_get_coin_anim_t = max_pgcat, p_coins = 0;
+bool p_get_coin = false, p_game_over = false;
+
+int game_over_timer = 80;
 
 Ent coin( 8 * 16, 4 * 16 );
 
 int anim_coin[8] = {4, 5, 6, 7, 8, 9, 10, 11};
+
+#define addTextBox(text, f) \
+    text_box_on = true; \
+    tte_printf("#{es;P:4,116}"); \
+    tte_printf(text, f);
 
 void updateCoinAndPlayer(){
     if( player.x == coin.x && player.y == coin.y ){	
@@ -123,6 +128,7 @@ void updateCoinAndPlayer(){
         coin.y = 16 * ( qran_range(16, 144) / 16 );
         p_get_coin = true;
         p_get_coin_anim_t = max_pgcat; 
+        ++p_coins;
         mmEffectEx(&get_coin);
     }
 
@@ -131,44 +137,44 @@ void updateCoinAndPlayer(){
     }else {
         player.dx = 0;
         player.dy = 0;
+        player.setId(3);
         p_get_coin_anim_t--;
     }
 
-    if( p_get_coin ){
-        player.setId(3);
-    }
-
     if( !p_get_coin ){
-    if( key_is_down( KEY_UP ) ){
-        player.move(0, -16);
-        p_dir = 1;
-    }else if( key_is_down( KEY_DOWN ) ){
-        player.move(0, 16);
-        p_dir = 0;
-    }else { player.dy = 0; }
+        if( key_is_down( KEY_UP ) ){
+            player.move(0, -16);
+            p_dir = 1;
+        }else if( key_is_down( KEY_DOWN ) ){
+            player.move(0, 16);
+            p_dir = 0;
+        }else { player.dy = 0; }
 
-    if( key_is_down( KEY_LEFT ) ){
-        player.move(-16, 0);
-        p_dir = 2;
-        player.flip = true;
-    }else if( key_is_down( KEY_RIGHT ) ){
-        player.move(16, 0);
-        p_dir = 2;
-        player.flip = false;
-    }else { player.dx = 0; }
+        if( key_is_down( KEY_LEFT ) ){
+            player.move(-16, 0);
+            p_dir = 2;
+            player.flip = true;
+        }else if( key_is_down( KEY_RIGHT ) ){
+            player.move(16, 0);
+            p_dir = 2;
+            player.flip = false;
+        }else { player.dx = 0; }
 
-    coin.setId(anim_coin[ ( ( TICK / 12 ) % 4 )]);
-    player.setId(p_dir);
-
+        player.setId(p_dir);
     }
+    coin.setId(anim_coin[ ( ( TICK / 12 ) % 4 )]);
 
     player.update(10);
     coin.update();
 }
 
-void winCopy(){
-    REG_WIN0H = ( player.x - player.w ) << 8 | ( ( player.x - player.w ) + 48 );
-    REG_WIN0V = ( player.y - player.h ) << 8 | ( ( player.y - player.h ) + 48 );
+void initGameOver(){
+    loadBmp16(game_over);
+    setMode( DCNT_MODE3 | DCNT_BG2 );
+    tte_init_bmp_default(3);
+
+    tte_write("#{P:72, 146}");
+    tte_write("-- Obrigado por jogar --");
 }
 
 int intro_imgs = 0;
@@ -191,7 +197,6 @@ void initMenu(){
     tte_init_bmp_default(3);
 
     tte_write("#{P:104, 130}");
-
     tte_write("Play");
 }
 
@@ -235,23 +240,21 @@ void initGame(){
     loadSprite8(spr_player, 0);
     loadSprite8(spr_coin, 16);
     loadTileset8(tileset, 0, 0);
-    loadMap(bg0, MAP1_LENGTH, 30, 0);
-    loadMap(bg1, MAP1_LENGTH, 20, 0);
+    loadMap(bg0, MAP1_LENGTH, 31, 0);
+    loadMap(bg1, MAP1_LENGTH, 30, 0);
 
     initOam();
 
     // Enable mode and background
-    REG_BG0CNT = BG_CBB( 0 ) | BG_SBB( 30 ) | BG_8BPP | BG_REG_32x32;
-    REG_BG1CNT = BG_CBB( 0 ) | BG_SBB( 20 ) | BG_8BPP | BG_REG_32x32;
-    setMode( DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_OBJ | DCNT_OBJ_1D | DCNT_WIN0 | DCNT_WIN1);
-
-    REG_WININ = WININ_BUILD(WIN_BG0 | WIN_OBJ, WIN_BG1);
-    winCopy();
-    REG_WIN1H = 0 | 240;
-    REG_WIN1V = 0 | 160;
+    REG_BG0CNT = BG_CBB( 0 ) | BG_SBB( 31 ) | BG_8BPP | BG_REG_32x32 | BG_PRIO(1);
+    REG_BG1CNT = BG_CBB( 0 ) | BG_SBB( 30 ) | BG_8BPP | BG_REG_32x32 | BG_PRIO(2);
+    setMode( DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_BG2 | DCNT_OBJ | DCNT_OBJ_1D );
 
     player.id = 0;
     coin.id = 4;
+
+    tte_init_chr4c_b4_default( 2, BG_CBB(1) | BG_SBB( 28 ) | BG_PRIO(0) );
+    tte_init_con();
 
     player.draw();
     coin.draw();
@@ -259,14 +262,37 @@ void initGame(){
 
 int bg_x = 0, bg_y = 0;
 void updateGame(){
-    updateCoinAndPlayer();
-    winCopy();
+    if( TICK % 64 == 0 ){
+        TIMER--;
+    }else if( TIMER <= 0 ){
+        p_game_over = true;
+    }
 
     bg_x++;
     bg_y++;
 
-    REG_BG1HOFS = -bg_x;
-    REG_BG1VOFS = -bg_y;
+    if( !p_game_over ){
+        tte_printf("#{es;P:2, 148}Timer: %i", TIMER);
+        tte_printf("#{P:100, 148}Coins: ? %i ?", p_coins);
+    }else {
+        game_over_timer--;
+        tte_printf("#{es;P:90, 68}Game Over");
+        return;
+    }
+
+    moveBg(1, bg_x, bg_y);
+    updateCoinAndPlayer();
+}
+
+void resetGame(){
+    TICK = 0;
+    p_game_over = false;
+    STATE = INTRO;
+    TIMER = 60;
+    p_coins = 0;
+    game_over_timer = 80;
+    intro_imgs = 0;
+    slides_count = 1;
 }
 
 int main(){
@@ -288,6 +314,9 @@ int main(){
         mmStart( MOD_FLATOUTLIES, MM_PLAY_LOOP );
         mmSetModuleVolume(50);
         initGame();
+    }else if( STATE == GAME_OVER ){
+        mmStop();
+        initGameOver();
     }
 
     while(true){
@@ -322,6 +351,17 @@ int main(){
             }
         }else if( STATE == GAME ){
             updateGame();
+            
+            if( game_over_timer <= 0 ){
+                RegisterRamReset(RESET_VRAM);
+                STATE = GAME_OVER;
+                goto refresh;
+            }
+        }else if( STATE == GAME_OVER ){
+            if( key_hit( KEY_A ) ){
+                resetGame();
+                goto refresh;
+            }
         }
 
         loadObjectsToOam();

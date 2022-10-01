@@ -5,6 +5,7 @@ int TICK = 0;
 int NUM_OBJS = 0; // Número de Objetos instanciados
 uint LIMIT_OBJS = 128;
 OBJ_ATTR obj_buffer[128]; // Buffer de Objetos, até 128
+int MGET_WIDTH = 32;
 
 void initVoid(){
     vid_vsync();
@@ -13,28 +14,7 @@ void initVoid(){
 }
 
 void initOam(){
-    /* OAM_CLEAR(); // Limpa a OAM */
     oam_init(obj_buffer, LIMIT_OBJS); // Inicia a OAM com um buffer pré-defenido
-}
-
-void initEnt(Entity *o, int x, int y){
-    /* if(o->sprite->attr1 == ATTR1_SIZE_64x64){ */
-    /*     o->w = 64; */
-    /*     o->h = 64; */
-    /* }else if(o->sprite->attr1 == ATTR1_SIZE_32x32){ */
-    /*     o->w = 32; */
-    /*     o->h = 32; */
-    /* }else if(o->sprite->attr1 == ATTR1_SIZE_16x16){ */
-    /*     o->w = 16; */
-    /*     o->h = 16; */
-    /* }else { */
-    /*     o->w = 8; */
-    /*     o->h = 8; */
-    /* } */
-
-    /* o->dx = 0; */
-    /* o->dy = 0; */
-    /* setObjectPosition(o, x, y); */
 }
 
 void loadObjectsToOam(){ oam_copy(oam_mem, obj_buffer, NUM_OBJS); }
@@ -100,10 +80,6 @@ OBJ_ATTR *spr(uint id, int x, int y, bool f, uint shape, uint bpp, uint size){
     return sprite;
 }
 
-/* void sprEnt(Entity *o, uint id, bool f, uint shape, uint bpp, uint size){ */
-/*     o->sprite = spr(id, o->x, o->y, f, shape, bpp, size); */
-/* } */
-
 void flipSprite(OBJ_ATTR *o, bool f){
     if( f ){
         o->attr1 |= ATTR1_HFLIP;
@@ -112,15 +88,9 @@ void flipSprite(OBJ_ATTR *o, bool f){
     }
 }
 
-void flipEnt(Entity *o, bool f){
-    if( f ){
-        o->sprite->attr1 |= ATTR1_HFLIP;
-    }else if( !f ){
-        o->sprite->attr1 &= 0xefff;
-    }
+void setObjectPosition(OBJ_ATTR *o, int x, int y){
+    obj_set_pos(o, x, y); 
 }
-
-void setObjectPosition(OBJ_ATTR *o, int x, int y){ obj_set_pos(o, x, y); }
 
 void setAnim(OBJ_ATTR *o, uint start, uint frames, uint delay){
     frames = frames == 0 ? 1 : frames;
@@ -169,21 +139,12 @@ void moveBg(uint bg, int x, int y){
     }
 }
 
-void updateEnt(Entity *o){
-    /* setObjectPosition(o, o->x, o->y); */
-    o->x += o->dx;
-    o->y += o->dy;
-}
-
 int PixelToTileX(int x){ return x * 8; }
 int PixelToTileY(int y){ return y * 8; }
 
 int TileToPixelX(int x){ return x / 8; }
 int TileToPixelY(int y){ return y / 8; }
 
-/* cu16 mget(vu32 x, vu32 y, Map map){ */
-/*     Map *m = &map; */
-/*     cu16 id = m->data[ y * m->w + x ]; */
-
-/*     return id; */
-/* } */
+u8 mget(int x, int y, cu16 *bg){
+    return bg[y * MGET_WIDTH + x];
+}

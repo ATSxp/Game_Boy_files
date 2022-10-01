@@ -12,6 +12,7 @@ extern int TICK;
 extern int NUM_OBJS; // Total atual de Objetos na OAM
 extern uint LIMIT_OBJS; // Quantidade limite de Objetos na OAM
 extern OBJ_ATTR obj_buffer[128]; // Buffer de Objetos, até 128
+extern int MGET_WIDTH;
 
 #define SQUARE 0 // Shape do sprite
 
@@ -28,7 +29,6 @@ typedef struct Entity{
 
 void initVoid(); // Inicia a "Engine"
 void initOam(); // inicia a OAM definindo o limite de Objetos na OAM (default: LIMIT_OBJS = 128)
-void initEnt(Entity *o, int x, int y); // Inicia uma Entidade
 
 // Carrega um Sprite na VRAM ( Só nos Modos de Tiles )
 #define loadSprite(tile, index) memcpy(pal_obj_mem, tile##Pal, tile##PalLen); memcpy(&tile_mem[4][index], tile##Tiles, tile##TilesLen);
@@ -47,7 +47,6 @@ void initEnt(Entity *o, int x, int y); // Inicia uma Entidade
 void loadObjectsToOam(); // Carrega os Objetos na OAM
 
 OBJ_ATTR getSprite(uint id);
-u16 getSpriteAttr(Entity *o, u16 attr); // Retorna um dos Atributos do sprite
 void setMode(uint mode);
 void setObjectPosition(OBJ_ATTR *o, int x, int y); // Posiciona o Objeto
 void setAnim(OBJ_ATTR *o, uint start, uint frames, uint delay); // Animação para o Objeto
@@ -58,13 +57,9 @@ int TileToPixelX(int x);
 int TileToPixelY(int y);
 
 void flipSprite(OBJ_ATTR *o, bool f);
-void flipEnt(Entity *o, bool f);
 void moveBg(uint bg, int x, int y);
 OBJ_ATTR *spr(uint id, int x, int y, bool f, uint shape, uint bpp, uint size); // Desenha um Sprite
-void sprEnt(Entity *o, uint id, bool f, uint shape, uint bpp, uint size);
-
-void updateEnt(Entity *o);
-/* cu16 mget(vu32 x, vu32 y, Map map); */
+u8 mget(int x, int y, cu16 *bg); // Get a tile id on map
 
 #ifdef __cplusplus
 };
