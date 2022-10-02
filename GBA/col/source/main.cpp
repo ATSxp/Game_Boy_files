@@ -41,7 +41,7 @@ class Ent{
                     break;
             }
 
-            obj_set_attr(o, o->attr0, o->attr1, ( o->attr2 * this->w) / div_sz );
+            obj_set_attr(o, o->attr0, o->attr1, ATTR2_PRIO(1) | ( o->attr2 * this->w) / div_sz );
 
         }
 
@@ -103,7 +103,7 @@ class Ent{
 
 };
 
-int TIMER = 60;
+int TIMER = 30;
 
 Ent player( 7 * 16, 4 * 16 );
 uint max_pgcat = 40; 
@@ -115,11 +115,6 @@ int game_over_timer = 80;
 Ent coin( 8 * 16, 4 * 16 );
 
 int anim_coin[8] = {4, 5, 6, 7, 8, 9, 10, 11};
-
-#define addTextBox(text, f) \
-    text_box_on = true; \
-    tte_printf("#{es;P:4,116}"); \
-    tte_printf(text, f);
 
 void updateCoinAndPlayer(){
     if( player.x == coin.x && player.y == coin.y ){	
@@ -261,6 +256,7 @@ void initGame(){
 }
 
 int bg_x = 0, bg_y = 0;
+int bg_vel = 1;
 void updateGame(){
     if( TICK % 64 == 0 ){
         TIMER--;
@@ -268,15 +264,20 @@ void updateGame(){
         p_game_over = true;
     }
 
-    bg_x++;
-    bg_y++;
+    if( TIMER < 20 ){
+        bg_vel = 2;
+    }else if( TIMER < 10 ){
+        bg_vel = 4;
+    }else if( TIMER < 5 ){
+        bg_vel = 6;
+    }
 
-    if( !p_game_over ){
-        tte_printf("#{es;P:2, 148}Timer: %i", TIMER);
-        tte_printf("#{P:100, 148}Coins: ? %i ?", p_coins);
-    }else {
+    bg_x += bg_vel;
+    bg_y += bg_vel;
+
+    if( p_game_over ){
         game_over_timer--;
-        tte_printf("#{es;P:90, 68}Game Over");
+        tte_write("#{es;P:90, 68}Game Over");
         return;
     }
 
@@ -288,7 +289,7 @@ void resetGame(){
     TICK = 0;
     p_game_over = false;
     STATE = INTRO;
-    TIMER = 60;
+    TIMER = 30;
     p_coins = 0;
     game_over_timer = 80;
     intro_imgs = 0;
@@ -358,7 +359,7 @@ int main(){
                 goto refresh;
             }
         }else if( STATE == GAME_OVER ){
-            if( key_hit( KEY_A ) ){
+            if( key_hit( KEY_A ) && p_game_over ){
                 resetGame();
                 goto refresh;
             }
