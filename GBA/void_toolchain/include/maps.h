@@ -3,10 +3,17 @@
 
 #include <tonc.h>
 
-#define loadMap(name, len, sbb, cbb) \
-    memcpy16(&se_mem[ sbb ][ cbb ], name, len); 
+#define loadMap( name, len, sbb, cbb ) \
+    memcpy16( &se_mem[ sbb ][ cbb ], name, len ); 
 
-void moveBg( u16 bg, int dx, int dy );
-void setBg( u16 bg, u16 bgcnt );
+#define moveBg( bg, dx, dy ) \
+    vs32 _dx##bg, _dy##bg; \
+    _dx##bg += dx; \
+    _dy##bg += dy; \
+    REG_BG##bg##HOFS = _dx##bg; \
+    REG_BG##bg##VOFS = _dy##bg; \
+
+#define setBg( bg, bgcnt ) \
+    REG_BG##bg##CNT = bgcnt;
 
 #endif // MAPS_H

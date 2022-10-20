@@ -25,14 +25,14 @@ int main(){
     loadMap(space_bg0, SPACE_LENGTH, 28, 0);
     loadTileObjLZ77Vram(spr_block, 16);
 
-    setBg(0, BG_SBB(28) | BG_CBB(0) | BG_SIZE0 );
+    setBg( 0, BG_SBB(28) | BG_CBB(0) | BG_SIZE0 | BG_PRIO(1) );
     REG_DISPCNT = DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_OBJ_1D | DCNT_OBJ;
 
-    tte_init_se_default(1, BG_CBB(1) | BG_SBB(5));
+    tte_init_se_default(1, BG_CBB(1) | BG_SBB(5) | BG_PRIO(0));
     tte_init_con();
 
     initOam();
-    
+
     Sprite coin;
     coin.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16x16 );
     coin.setPos(16, 0);
@@ -46,10 +46,13 @@ int main(){
         VBlankIntrWait(); // Vsync
         key_poll(); // Pesquisa para keystates e chaves repetidas
 
+        moveBg(0, 1, 2);
+
         coin.update();
         coin.anim(0, 2, 8);
 
         block.update();
+        block.anim(3, 2, 8);
  
         updateOam();
     }

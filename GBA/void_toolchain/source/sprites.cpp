@@ -42,14 +42,36 @@ Sprite::Sprite( s16 slot ){
 void Sprite::update(){
     tick++;
 
-    if( flip ){
+    if( flip_h ){
         spr->attr1 |= ATTR1_HFLIP;
-    }else if( !flip ){
+    }else if( !flip_h ){
         spr->attr1 &= 0xefff;
     }
 
+    if( flip_v ){
+        spr->attr1 |= ATTR1_VFLIP;
+    }else if( !flip_v ){
+        spr->attr1 &= 0xefff;
+    }
+
+    size.w = getWidth();
+    size.h = getHeight();
+
     obj_set_attr( spr, spr->attr0, spr->attr1, ATTR2_BUILD(tid, pal, prio) );
     obj_set_pos( spr, pos.x, pos.y );
+}
+
+Size Sprite::getSize(){
+    vu32 _w = obj_get_width(spr), _h = obj_get_height(spr);
+    return { _w, _h };
+}
+
+int Sprite::getWidth(){
+    return obj_get_width(spr);
+}
+
+int Sprite::getHeight(){
+    return obj_get_height(spr);
 }
 
 void Sprite::setAttr(u16 attr0, u16 attr1){
@@ -80,11 +102,11 @@ void Sprite::anim(u16 start, u16 frames, u16 rate){
 
     u16 size = 1;
 
-    if( spr->attr1 & ATTR1_SIZE_32x32 ){
-        size = 16;
-    }else if( spr->attr1 & ATTR1_SIZE_16x16 ){
+    if( getWidth() == 32 ){
+        size = 8;
+    }else if( getWidth() == 16 ){
         size = 4;
-    }else if( spr->attr1 & ATTR1_SIZE_8x8 ){
+    }else if( getWidth() == 8 ){
         size = 1;
     }
 
@@ -102,14 +124,11 @@ void Sprite::anim(u16 start, u16 frames, u16 rate){
     tid = start + id;
 }
 
-void Sprite::setTileId( u16 id ){
-    vu16 size;
-
-    if( spr->attr1 & ATTR1_SIZE_16 ){
-        size = 2;
-    }else if( spr->attr1 & ATTR1_SIZE_8 ){
-        size = 1;
-    }
-
-    tid = id * size;
-}
+// Não funciona corretamente
+/*void Sprite::animForward( u16 frames, u16 rate ){*/
+/*    /*! TODO:*/ 
+/*     * Talvez precise trocar/retirar a função floor, isso*/
+/*     * se a função se sair de forma ineficiente no hardware*/
+/*     */*/
+/*    anim( (int)floor( tid / 4 ), frames, rate );*/
+/*}*/

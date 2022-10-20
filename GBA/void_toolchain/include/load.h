@@ -48,19 +48,19 @@ extern u16 SPRITE_IN_VRAM_TILE;
 #define loadTileObjLZ77Vram( name, size ) \
     if( SPRITE_IN_VRAM_OBJ > 0 ){ \
         LZ77UnCompVram( name##Tiles, &tile_mem[ 4 ][ SPRITE_IN_VRAM_OBJ ] ); \
-        addSIVO( size == 8 ? 1 : name##TilesLen / ( size * 2 ) ); \
+        addSIVO( size == 8 ? 1 : name##TilesLen / ( size * 2 ) + 1 ); \
     }else { \
         LZ77UnCompVram( name##Tiles, &tile_mem[ 4 ][ 0 ] ); \
-        addSIVO( size == 8 ? 1 : name##TilesLen / ( size * 2 ) ); \
+        addSIVO( size == 8 ? 1 : name##TilesLen / ( size * 2 ) + 1 ); \
     }
 
 #define loadTileLZ77Vram( name, cbb, size ) \
     if( SPRITE_IN_VRAM_TILE > 0 ){ \
         LZ77UnCompVram( name##Tiles, &tile_mem[ cbb ][ SPRITE_IN_VRAM_TILE ] ); \
-        addSIVT( size == 8 ? 1 : name##TilesLen / ( size * 2 ) ); \
+        addSIVT( size == 8 ? 1 : name##TilesLen / ( size * 2 ) + 1 ); \
     }else { \
         LZ77UnCompVram( name##Tiles, &tile_mem[ cbb ][ 0 ] ); \
-        addSIVT( size == 8 ? 1 : name##TilesLen / ( size * 2 ) ); \
+        addSIVT( size == 8 ? 1 : name##TilesLen / ( size * 2 ) + 1 ); \
     }
 
 #define loadPalObj( name, bank ) \
@@ -72,5 +72,9 @@ extern u16 SPRITE_IN_VRAM_TILE;
 typedef struct {
     int x; int y;
 } Axis;
+
+typedef struct {
+    u32 w; u32 h;
+} Size;
 
 #endif // LOAD_H
