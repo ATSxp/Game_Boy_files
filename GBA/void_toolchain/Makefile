@@ -24,6 +24,8 @@ TARGET		:= $(notdir $(CURDIR))
 BUILD		:= build
 SOURCES		:= source source/sprites source/maps
 INCLUDES	:= include
+ROMTITLE 	:= ROMTITLE
+ROMCODE 	:= SBTP
 DATA		:=
 MUSIC		:= #audio
 

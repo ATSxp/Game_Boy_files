@@ -9,6 +9,23 @@
 #include "sprites/spr_block.h"
 
 #include "maps/space.h"
+#include "maps/space_2.h"
+#include "maps/space_solids.h"
+
+u16 sol(int x, int y){
+    return mget( x / 8, y / 8, space_solidsMap, SPACE_WIDTH) == 0x1;
+}
+
+u8 isSolid(int x, int y){
+    if(
+        sol( x, y ) || sol( x + 15, y ) ||
+        sol( x, y + 15 ) || sol( x + 15, y + 15 )
+      ){
+        return TRUE;
+    }
+    
+    return FALSE;
+}
 
 int main(){
     // Gerenciamento de interrupção de hardware
@@ -16,19 +33,25 @@ int main(){
     irq_add(II_VBLANK, NULL);
     irq_enable(II_VBLANK);
 
-    loadPalObj(spr_red_coin, 0);
-    loadPalBg(spr_red_coin, 0);
+    loadPalObj(spr_red_coin);
+    loadPalObj(spr_red_coin);
+    loadPalBg(space_2);
     loadTileObj(spr_red_coin, 16);
     loadTileObj(spr_red_small_coin, 8);
     loadTileObj(spr_play, 16);
-    loadTile(tiles, 0, 8);
-    loadMap(space_bg0, SPACE_LENGTH, 28, 0);
     loadTileObjLZ77Vram(spr_block, 16);
 
-    setBg( 0, BG_SBB(28) | BG_CBB(0) | BG_SIZE0 | BG_PRIO(1) );
+    loadTileLZ77Vram(space_2);
+    Map space(0, BG_CBB(0) | BG_SBB(29) | BG_PRIO(1), space_2Map, SPACE_WIDTH, SPACE_HEIGHT);
+    space.vp = {
+        0, 0, 512, 240,
+        0, 0, 512, 160,
+    };
+
+    /* setBg( 0, BG_SBB(28) | BG_CBB(0) | BG_PRIO(1) ); */
     REG_DISPCNT = DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_OBJ_1D | DCNT_OBJ;
 
-    tte_init_se_default(1, BG_CBB(1) | BG_SBB(5) | BG_PRIO(0));
+    tte_init_se_default(1, BG_CBB(2) | BG_SBB(28) | BG_PRIO(0));
     tte_init_con();
 
     initOam();
@@ -39,20 +62,42 @@ int main(){
 
     Sprite block;
     block.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16);
-    block.tid = 13;
+    block.tid = 14;
+
+    int px = SCREEN_WIDTH / 2, py = SCREEN_HEIGHT / 2, dx = 0, dy = 0;
 
     // Update
     while(TRUE){
         VBlankIntrWait(); // Vsync
         key_poll(); // Pesquisa para keystates e chaves repetidas
 
-        moveBg(0, 1, 2);
+        space.update();
 
         coin.update();
-        coin.anim(0, 2, 8);
+        coin.anim(0, 2, 16);
 
         block.update();
-        block.anim(3, 2, 8);
+        block.anim(3, 2, 16);
+
+        int camx = px - 120, camy = py - 60;
+        space.setPos(camx, camy) ;
+
+        block.setPos(px - space.x, py - space.y);
+
+        dx = key_tri_horz();
+        dy = key_tri_vert();
+
+        if( isSolid(px, py) ){
+            dx = 0;
+            dy = 0;
+        }
+
+        if( key_hit( KEY_A ) ){
+            space.setTile(0, 0, 0x0);
+        }
+
+        px += dx;
+        py += dy;
  
         updateOam();
     }

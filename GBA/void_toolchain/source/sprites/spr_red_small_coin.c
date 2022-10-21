@@ -3,22 +3,24 @@
 
 //======================================================================
 //
-//	spr_red_small_coin, 8x8@4, 
+//	spr_red_small_coin, 16x8@4, 
 //	Transparent palette entry: 11.
 //	+ palette 16 entries, not compressed
-//	+ 1 tiles not compressed
-//	Total size: 32 + 32 = 64
+//	+ 2 tiles not compressed
+//	Total size: 32 + 64 = 96
 //
-//	Time-stamp: 2022-10-13, 23:26:54
+//	Time-stamp: 2022-10-19, 23:50:20
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.3
 //	( http://www.coranac.com/projects/#grit )
 //
 //======================================================================
 
-const unsigned short spr_red_small_coinTiles[16] __attribute__((aligned(4)))=
+const unsigned short spr_red_small_coinTiles[32] __attribute__((aligned(4)))=
 {
 	0x0000,0x0000,0xE000,0x000E,0x8E00,0x00E8,0x88E0,0x0E8E,
 	0x2820,0x0288,0x8200,0x0028,0x2000,0x0002,0x0000,0x0000,
+	0xBBBB,0xBBBB,0xBBBB,0xBBBB,0xBBBB,0xBBBB,0xBBBB,0xBBBB,
+	0xBBBB,0xBBBB,0xBBBB,0xBBBB,0xBBBB,0xBBBB,0xBBBB,0xBBBB,
 };
 
 const unsigned short spr_red_small_coinPal[16] __attribute__((aligned(4)))=

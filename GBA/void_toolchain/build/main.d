@@ -16,15 +16,14 @@ main.o: \
  C:/devkitPro/libtonc/include/tonc_nocash.h \
  C:/devkitPro/libtonc/include/tonc_text.h \
  c:\users\ats\documents\c\gba\gba_tutorial_github\void_toolchain\include\void.h \
- c:\users\ats\documents\c\gba\gba_tutorial_github\void_toolchain\include\load.h \
- c:\users\ats\documents\c\gba\gba_tutorial_github\void_toolchain\include\sprites.h \
- c:\users\ats\documents\c\gba\gba_tutorial_github\void_toolchain\include\maps.h \
  C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/spr_red_coin.h \
  C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/spr_red_small_coin.h \
  C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/spr_play.h \
  C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/tiles.h \
  C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/spr_block.h \
- C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/maps/space.h
+ C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/maps/space.h \
+ C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/maps/space_2.h \
+ C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/maps/space_solids.h
 C:/devkitPro/libtonc/include/tonc.h:
 C:/devkitPro/libtonc/include/tonc_types.h:
 C:/devkitPro/libtonc/include/tonc_memmap.h:
@@ -41,12 +40,11 @@ C:/devkitPro/libtonc/include/tonc_video.h:
 C:/devkitPro/libtonc/include/tonc_nocash.h:
 C:/devkitPro/libtonc/include/tonc_text.h:
 c:\users\ats\documents\c\gba\gba_tutorial_github\void_toolchain\include\void.h:
-c:\users\ats\documents\c\gba\gba_tutorial_github\void_toolchain\include\load.h:
-c:\users\ats\documents\c\gba\gba_tutorial_github\void_toolchain\include\sprites.h:
-c:\users\ats\documents\c\gba\gba_tutorial_github\void_toolchain\include\maps.h:
 C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/spr_red_coin.h:
 C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/spr_red_small_coin.h:
 C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/spr_play.h:
 C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/tiles.h:
 C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/sprites/spr_block.h:
 C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/maps/space.h:
+C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/maps/space_2.h:
+C:/Users/ATS/Documents/C/GBA/gba_tutorial_github/void_toolchain/source/maps/space_solids.h:
