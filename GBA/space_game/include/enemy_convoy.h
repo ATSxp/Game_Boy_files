@@ -18,7 +18,10 @@ void initConvoys();
 void updateConvoys();
 void newConvoy();
 void updateItems();
-void dropMegaBullet( int x, int y );
+void dropMegaBullet( u16 j_slot, int x, int y );
+void dropPotion( u16 j_slot, int x, int y);
+void dropBoostBullet( u16 j_slot, int x, int y);
+void dropItem( int x, int y );
 void itemIdValue( u16 id );
 
 #endif // ENEMY_CONVOY_H

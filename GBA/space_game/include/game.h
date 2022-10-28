@@ -11,6 +11,11 @@
 #include "../source/sprites/tileset_space.h"
 #include "../source/sprites/spr_hp_player.h"
 #include "../source/sprites/spr_mega_bullet_slot_and_item.h"
+#include "../source/sprites/spr_life_item.h"
+#include "../source/sprites/spr_boost_bullet_item.h"
+#include "../source/sprites/spr_mega_bullet.h"
+#include "../source/sprites/spr_multi_bullets_item.h"
+#include "../source/sprites/spr_imortality_item.h"
 
 void initGame();
 void initHudPlayer();

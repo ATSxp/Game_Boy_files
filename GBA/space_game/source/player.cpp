@@ -3,7 +3,8 @@
 Ship player( ( SCREEN_WIDTH - 16 ) / 2,  ( SCREEN_HEIGHT - 16 ) / 2, MAX_HP_PLAYER);
 std::vector< Ship > pb; // Player Bullets
 u16 MAX_PLAYER_TIMER_SHOOT = 10;
-s16 player_timer_shoot = MAX_PLAYER_TIMER_SHOOT, check_slot_bul = 1, p_points = 0, p_mega_bullets = 0;
+s16 player_timer_shoot = MAX_PLAYER_TIMER_SHOOT, check_slot_bul = 1;
+s16 p_boost_bullets = 0, p_points = 0, p_mega_bullets = 1, p_potions = 0;
 
 void initPlayer(){
     loadPalObj(spr_player);
@@ -11,7 +12,7 @@ void initPlayer(){
     loadTileObj(spr_bullets, 16);
     loadTileObj(spr_bullet_explosion, 16);
 
-    SPRITE_TOTAL_OAM += 32;
+    SPRITE_TOTAL_OAM += 33;
 
     player.sp.newSprite(0);
     player.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16);
@@ -25,8 +26,9 @@ void updatePlayer(){
         playerShoot();
         animPlayer();
         updateBulletsPlayer();
+        lifePlayer();
     }
-
+    
     if( p_mega_bullets > 1 ){
         p_mega_bullets = 1;
     }
@@ -55,6 +57,9 @@ void movePlayer(){
 void playerShoot(){
     if( key_is_down( KEY_A ) && player_timer_shoot <= 0 ){
         newBulletPlayer();
+    }else if( key_hit( KEY_L ) && key_hit( KEY_R ) && p_mega_bullets > 0 ){
+        p_mega_bullets--;
+        newMegaBulletPlayer();
     }
 }
 
@@ -81,6 +86,22 @@ void newBulletPlayer(){
         }
         check_slot_bul++;
         player_timer_shoot = MAX_PLAYER_TIMER_SHOOT;
+    }
+}
+
+void newMegaBulletPlayer(){
+    if( pb.size() < MAX_PLAYER_BULLETS + 1 ){
+        if( spriteIsHided( 61 ) ){
+            Ship b( player.pos.x, player.pos.y, 2 );
+            b.sp.newSprite( 61 );
+            b.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_32 );
+            b.sp.tid = 94;
+            b.size = { 32, 32 };
+            
+            b.spd = 2;
+            b.dy = -b.spd;
+            pb.push_back( Ship( b ) );
+        }
     }
 }
 
@@ -113,5 +134,16 @@ void gameOverPlayer(){
             pb[j].sp.hide();
             pb.erase( pb.begin() + j );
         }
+    }
+}
+
+void lifePlayer(){
+    if( player.hp > MAX_HP_PLAYER ){
+        player.hp = MAX_HP_PLAYER;
+    }
+
+    if( key_hit( KEY_B ) && p_potions > 0 && player.hp < MAX_HP_PLAYER ){
+        p_potions--;
+        player.hp += 2;
     }
 }

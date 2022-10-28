@@ -60,7 +60,7 @@ void updateConvoys(){
         }else if( convoys[i].hp <= 0 ){
             destroyEnemy( &convoys[i], &convoys, i );
             if( !drop_item ){
-                dropMegaBullet( convoys[i].pos.x, convoys[i].pos.y );
+                dropItem( convoys[i].pos.x, convoys[i].pos.y );
                 drop_item = TRUE;
             }
         }else {
@@ -96,19 +96,25 @@ void updateItems(){
     }
 }
 
-void dropMegaBullet( int x, int y ){
+void dropItem( int x, int y ){
     vu16 jump_slot = 53;
+    vu32 _rand_item = qran_range(ITEM_MEGA_BULLET, ITEM_BOOST_BULLET);
 
     if( items.size() < MAX_ITEMS ){
         if( spriteIsHided( jump_slot + check_slot_to_item ) ){
-            Item m( jump_slot + check_slot_to_item, x, y );
-            m.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
-            m.sp.tid = 74;
-            m.sp.prio = 1;
-            m.spd = 2;
-            m.id = ITEM_MEGA_BULLET;
 
-            items.push_back( Item( m ) );
+            switch(_rand_item){
+                case ITEM_MEGA_BULLET:
+                    dropMegaBullet( jump_slot, x, y );
+                    break;
+                case ITEM_POTION:
+                    dropPotion( jump_slot, x, y );
+                    break;
+                case ITEM_BOOST_BULLET:
+                    dropBoostBullet( jump_slot, x, y );
+                    break;
+            }
+
         }
         check_slot_to_item++;
     }
@@ -119,5 +125,42 @@ void itemIdValue( u16 id ){
         case ITEM_MEGA_BULLET:
             p_mega_bullets++;
             break;
+        case ITEM_POTION:
+            p_potions++;
+            break;
+        case ITEM_BOOST_BULLET:
+            p_boost_bullets++;
+            MAX_PLAYER_TIMER_SHOOT--;
+            break;
     }
+}
+
+void dropMegaBullet( u16 j_slot, int x, int y){
+    Item m( j_slot + check_slot_to_item, x, y );
+    m.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
+    m.sp.tid = 74;
+    m.sp.prio = 1;
+    m.id = ITEM_MEGA_BULLET;
+
+    items.push_back( Item( m ) );
+}
+
+void dropPotion( u16 j_slot, int x, int y){
+    Item p( j_slot + check_slot_to_item, x, y );
+    p.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
+    p.sp.tid = 78;
+    p.sp.prio = 1;
+    p.id = ITEM_POTION;
+
+    items.push_back( Item( p ) );
+}
+
+void dropBoostBullet( u16 j_slot, int x, int y){
+    Item b( j_slot + check_slot_to_item, x, y );
+    b.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
+    b.sp.tid = 82;
+    b.sp.prio = 1;
+    b.id = ITEM_POTION;
+
+    items.push_back( Item( b ) );
 }

@@ -16,7 +16,7 @@
 
 extern Ship player;
 extern std::vector< Ship > pb;
-extern s16 p_points, p_mega_bullets;
+extern s16 p_points, p_mega_bullets, p_potions, p_boost_bullets;
 extern u16 MAX_PLAYER_TIMER_SHOOT;
 
 void initPlayer();
@@ -27,5 +27,7 @@ void newBulletPlayer();
 void updateBulletsPlayer();
 void animPlayer();
 void gameOverPlayer();
+void lifePlayer();
+void newMegaBulletPlayer();
 
 #endif // PLAYER_H

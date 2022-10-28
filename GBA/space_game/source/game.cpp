@@ -16,7 +16,7 @@ void initGame(){
             2, 
             BG_CBB(1) | BG_SBB(31) | BG_PRIO(0), 
             0, 
-            0x6318, 
+            0x77DF, 
             14, 
             NULL, 
             NULL);
@@ -26,15 +26,15 @@ void initGame(){
     initEnemy();
     initConvoys();
     initHudPlayer();
-    
-    nocash_puts_str("Paletas, Sprites/Tiles carregados na memoria");
+
+    loadTileObj(spr_mega_bullet, 32);
 }
 
 void updateGame(){
     string points_txt = "Points: " + to_string( p_points );
     ptx = SCREEN_WIDTH - ( points_txt.length() * 8 );
 
-    tte_write_str("#{es;X:" + to_string(ptx) + "}");
+    tte_write_str("#{es;P:" + to_string(ptx) + ",0}");
     tte_write_str(points_txt);
 
     updateHudPlayer();
@@ -52,9 +52,16 @@ void updateGame(){
 void initHudPlayer(){
     loadTileObj(spr_hp_player, 8);
     loadTileObj(spr_mega_bullet_slot_and_item , 16);
+    loadTileObj(spr_life_item , 16);
+    loadTileObj(spr_boost_bullet_item , 16);
+    loadTileObj(spr_multi_bullets_item, 16);
+    loadTileObj(spr_imortality_item, 16);
+
+    SPRITE_TOTAL_OAM += 5;
 }
 
 void updateHudPlayer(){
+    // Hp
     for( int i = 0; i < MAX_HP_PLAYER; i++ ){
         OBJ_ATTR *spr = &OBJ_BUFFER[ ( 16 + MAX_HP_PLAYER ) + i ];
         obj_set_attr( spr, 
@@ -76,14 +83,44 @@ void updateHudPlayer(){
 
     obj_hide_multi( &OBJ_BUFFER[ 16 ], ABS( player.hp - MAX_HP_PLAYER ) );
 
-    if( p_mega_bullets != 0 ){
-        Sprite mega_bul(56);
-        mega_bul.setAttr(ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16);
-        mega_bul.tid = 74;
-        /* mega_bul.prio = 0; */
-        /* mega_bul.setPos( SCREEN_WIDTH - 16, SCREEN_HEIGHT - 8 ); */
+    // Mega Bullet
+    OBJ_ATTR *spr = &OBJ_BUFFER[56];
+    obj_set_attr(spr, ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16, ATTR2_BUILD(74, 0, 0) );
+    obj_set_pos(spr, SCREEN_WIDTH - 16, SCREEN_HEIGHT - 16 );
 
-        mega_bul.update();
+    if( p_mega_bullets > 0 ){
+        obj_unhide(spr, 0);
+    }else {
+        obj_hide(spr);
+    }
+
+    // Potion
+    OBJ_ATTR *po = &OBJ_BUFFER[57];
+    obj_set_attr(po, ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16, ATTR2_BUILD(78, 0, 0) );
+    obj_set_pos(po, 0, SCREEN_HEIGHT - 32 );
+
+    if( p_potions > 0 ){
+        obj_unhide(po, 0);
+        tte_write_str("#{P:16,136}" + to_string(p_potions) );
+    }else {
+        obj_hide(po);
+        tte_erase_rect(16, 136, 32, 8);
+    }
+
+    //Boost Bullet
+    OBJ_ATTR *b = &OBJ_BUFFER[58];
+    obj_set_attr(b, ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16, ATTR2_BUILD(82, 0, 0) );
+    obj_set_pos(b, SCREEN_WIDTH - 16, SCREEN_HEIGHT - 32 );
+
+    string boost_text = to_string(p_boost_bullets) + ".lv";
+    vu32 tx = SCREEN_WIDTH - ( boost_text.length() * 8 ) - 16;
+
+    if( p_boost_bullets > 0 ){
+        obj_unhide(b, 0);
+        tte_write_str("#{P:"+ to_string(tx) + ",136}" + boost_text );
+    }else {
+        obj_hide(b);
+        tte_erase_rect(224, 128, 8, 8);
     }
 }
 
@@ -91,7 +128,16 @@ void removeEnemies( Ship *t ){
     for( size_t j = 0; j < pb.size(); j++ ){
         if( t->shipVsShip( &pb[j] ) && !t->damaged && !t->dead && !pb[j].dead ){
             t->setDamage(1);
-            destroyPlayerBullet( j );
+
+            if( pb[j].hp < 2 ){
+                destroyPlayerBullet( j );
+            }else {
+                if( t->hp > 0 ){
+                    pb[j].dy = 0;
+                }else {
+                    pb[j].dy = -pb[j].spd;
+                }
+            }
         }
     }
 }
@@ -108,9 +154,12 @@ void destroyEnemy( Ship *t, std::vector<Ship> *v, size_t i ){
     t->dead = TRUE;
     animEnemyExplode( t );
     if( t->sp.tid == ( 4 + 9 ) * 4 && t->dead ){
+        if( t->hp <= 0 ){
+            p_points++;
+        }
+
         t->sp.hide();
         v->erase( v->begin() + i );
-        p_points++;
     }
 }
 
