@@ -8,6 +8,9 @@ u16 SPRITE_IN_VRAM_TILE = 0;
 u16 PAL_IN_BANK_OBJ = 0;
 u16 PAL_IN_BANK_BG = 0;
 
+void tte_write_str( std::string text ){ tte_write( text.c_str() ); }
+void nocash_puts_str(std::string text){ nocash_puts( text.c_str() ); }
+
 void initVoid(){
     initOam();
 }

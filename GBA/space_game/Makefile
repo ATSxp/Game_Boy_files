@@ -24,6 +24,8 @@ TARGET		:= $(notdir $(CURDIR))
 BUILD		:= build
 SOURCES		:= source source/sprites source/maps
 INCLUDES	:= include
+ROMTITLE 	:= STERUS
+ROMCODE 	:= BSE
 DATA		:=
 MUSIC		:= #audio
 

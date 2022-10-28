@@ -2,7 +2,8 @@
 
 Ship player( ( SCREEN_WIDTH - 16 ) / 2,  ( SCREEN_HEIGHT - 16 ) / 2, MAX_HP_PLAYER);
 std::vector< Ship > pb; // Player Bullets
-s16 player_timer_shoot = MAX_PLAYER_TIMER_SHOOT, check_slot_bul = 1;
+u16 MAX_PLAYER_TIMER_SHOOT = 10;
+s16 player_timer_shoot = MAX_PLAYER_TIMER_SHOOT, check_slot_bul = 1, p_points = 0, p_mega_bullets = 0;
 
 void initPlayer(){
     loadPalObj(spr_player);
@@ -25,6 +26,11 @@ void updatePlayer(){
         animPlayer();
         updateBulletsPlayer();
     }
+
+    if( p_mega_bullets > 1 ){
+        p_mega_bullets = 1;
+    }
+
     gameOverPlayer();
     player.update();
 }
@@ -90,12 +96,6 @@ void updateBulletsPlayer(){
             destroyPlayerBullet(i);
         }
     }
-}
-
-void destroyPlayerBullet( int i ){
-    pb[i].dead = TRUE;
-    pb[i].sp.hide();
-    pb.erase( pb.begin() + i );
 }
 
 void gameOverPlayer(){

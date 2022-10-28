@@ -2,9 +2,15 @@
 #define VOID_H
 
 #include <tonc.h>
-#include <string.h>
+#include <string>
 
 #define MAX_SPRITES_IN_OAM 128
+
+#define pmem( index, value ) \
+    if( value ) \
+        sram_mem[ index ] = value; \
+    else \
+        return sram_mem[ index ];
 
 #define moveBg( bg, dx, dy ) \
     vs32 _dx##bg, _dy##bg; \
@@ -184,6 +190,8 @@ class Map{
 /*         void fadeOut( u16 spd = 1 ); */
 /* }; */
 
+void tte_write_str( std::string text );
+void nocash_puts_str( std::string text );
 void initVoid();
 void updateVoid();
 void resetVoid();

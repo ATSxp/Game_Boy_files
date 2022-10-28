@@ -25,9 +25,13 @@ states.o: \
  c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_player.h \
  c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_bullets.h \
  c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_bullet_explosion.h \
+ c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\include\enemy_convoy.h \
+ c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\include\items.h \
+ c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_enemy_convoy.h \
  c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\maps\space.h \
  c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\tileset_space.h \
- c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_hp_player.h
+ c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_hp_player.h \
+ c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_mega_bullet_slot_and_item.h
 c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\include\states.h:
 c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\include\void.h:
 C:/devkitPro/libtonc/include/tonc.h:
@@ -53,6 +57,10 @@ c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_e
 c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_player.h:
 c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_bullets.h:
 c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_bullet_explosion.h:
+c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\include\enemy_convoy.h:
+c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\include\items.h:
+c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_enemy_convoy.h:
 c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\maps\space.h:
 c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\tileset_space.h:
 c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_hp_player.h:
+c:\users\ats\documents\c\gba\gba_tutorial_github\space_game\source\sprites\spr_mega_bullet_slot_and_item.h:

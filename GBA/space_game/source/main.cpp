@@ -7,6 +7,7 @@
  * - Bg music;
  * - inimigo variado ( o cargueiro );
  * - HUD;
+ * - itens ( moedas, mega-balas, imortalidade, tiros-super-rápidos );
  */
 
 #include "../include/void.h"

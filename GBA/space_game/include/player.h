@@ -12,10 +12,12 @@
 
 #define MAX_HP_PLAYER 8
 #define MAX_PLAYER_BULLETS 16
-#define MAX_PLAYER_TIMER_SHOOT 5
+/* #define MAX_PLAYER_TIMER_SHOOT 5 */
 
 extern Ship player;
 extern std::vector< Ship > pb;
+extern s16 p_points, p_mega_bullets;
+extern u16 MAX_PLAYER_TIMER_SHOOT;
 
 void initPlayer();
 void updatePlayer();
@@ -24,7 +26,6 @@ void playerShoot();
 void newBulletPlayer();
 void updateBulletsPlayer();
 void animPlayer();
-void destroyPlayerBullet(int i);
 void gameOverPlayer();
 
 #endif // PLAYER_H
