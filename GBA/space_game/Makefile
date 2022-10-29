@@ -26,6 +26,7 @@ SOURCES		:= source source/sprites source/maps
 INCLUDES	:= include
 ROMTITLE 	:= STERUS
 ROMCODE 	:= BSE
+VERSION 	:= 0.1
 DATA		:=
 MUSIC		:= #audio
 

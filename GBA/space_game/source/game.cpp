@@ -12,14 +12,16 @@ void initGame(){
     loadPalBg(tileset_space);
     loadTile(tileset_space);
 
-    tte_init_se(
+    memcpy16(pal_bg_bank[15], tileset_spacePal, tileset_spacePalLen / 2);
+
+    tte_init_chr4c(
             2, 
             BG_CBB(1) | BG_SBB(31) | BG_PRIO(0), 
-            0, 
-            0x77DF, 
-            14, 
-            NULL, 
-            NULL);
+            0xF000, 
+            0x0201,
+            0x28A3 | 0x288F << 16, 
+            &verdana9Font, 
+            (fnDrawg)chr4c_drawg_b1cts_fast);
 
     initVoid();
     initPlayer();
@@ -31,18 +33,17 @@ void initGame(){
 }
 
 void updateGame(){
-    string points_txt = "Points: " + to_string( p_points );
-    ptx = SCREEN_WIDTH - ( points_txt.length() * 8 );
-
-    tte_write_str("#{es;P:" + to_string(ptx) + ",0}");
-    tte_write_str(points_txt);
-
-    updateHudPlayer();
+    if( player.dead ){
+        updateGameOver();
+    }else {
+        updateHudPlayer();
+    }
     updatePlayer();
     updateEnemies();
     updateConvoys();
 
     spc0_y--;
+
     REG_BG_OFS[0].y = spc0_y;
     REG_BG_OFS[1].y = spc0_y * 3;
 
@@ -56,11 +57,19 @@ void initHudPlayer(){
     loadTileObj(spr_boost_bullet_item , 16);
     loadTileObj(spr_multi_bullets_item, 16);
     loadTileObj(spr_imortality_item, 16);
+    loadTileObj(spr_buttons, 16);
 
     SPRITE_TOTAL_OAM += 5;
 }
 
 void updateHudPlayer(){
+    // Points
+    string points_txt = translTxt(EN_POINTS, PT_POINTS);
+    ptx = SCREEN_WIDTH - ( ( points_txt.length() - 7 ) * 5 );
+
+    tte_write_str("#{es;P:" + to_string(ptx) + ",0}");
+    tte_write_str("#{ci:7}"+points_txt);
+
     // Hp
     for( int i = 0; i < MAX_HP_PLAYER; i++ ){
         OBJ_ATTR *spr = &OBJ_BUFFER[ ( 16 + MAX_HP_PLAYER ) + i ];
@@ -101,26 +110,21 @@ void updateHudPlayer(){
 
     if( p_potions > 0 ){
         obj_unhide(po, 0);
-        tte_write_str("#{P:16,136}" + to_string(p_potions) );
+        tte_write_str("#{P:16,130}" + to_string(p_potions) );
     }else {
         obj_hide(po);
-        tte_erase_rect(16, 136, 32, 8);
+        chr4c_erase(16, 136, 32, 8);
     }
 
-    //Boost Bullet
-    OBJ_ATTR *b = &OBJ_BUFFER[58];
-    obj_set_attr(b, ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16, ATTR2_BUILD(82, 0, 0) );
-    obj_set_pos(b, SCREEN_WIDTH - 16, SCREEN_HEIGHT - 32 );
+    //Multi Bullet
+    OBJ_ATTR *m = &OBJ_BUFFER[58];
+    obj_set_attr(m, ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16, ATTR2_BUILD(86, 0, 0) );
+    obj_set_pos(m, SCREEN_WIDTH - 33, SCREEN_HEIGHT - 16 );
 
-    string boost_text = to_string(p_boost_bullets) + ".lv";
-    vu32 tx = SCREEN_WIDTH - ( boost_text.length() * 8 ) - 16;
-
-    if( p_boost_bullets > 0 ){
-        obj_unhide(b, 0);
-        tte_write_str("#{P:"+ to_string(tx) + ",136}" + boost_text );
+    if( p_multi_bullets > 0 ){
+        obj_unhide(m, 0);
     }else {
-        obj_hide(b);
-        tte_erase_rect(224, 128, 8, 8);
+        obj_hide(m);
     }
 }
 

@@ -13,10 +13,14 @@
 #include "../include/void.h"
 #include "../include/states.h"
 
+/* u8 r_main = FALSE; */
+
 int main(){
     // Gerenciamento de interrupção de hardware
     irq_init(NULL);
     irq_add(II_VBLANK, NULL);
+
+    reset_main:
 
     initStates();
 
@@ -25,6 +29,8 @@ int main(){
         key_poll(); // Pesquisa para keystates e chaves repetidas
 
         updateStates();
+
+        /* if( r_main ){ r_main = FALSE; goto reset_main; } */
     }
     return 0;
 }

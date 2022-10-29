@@ -6,7 +6,8 @@
 
 #define ITEM_MEGA_BULLET 1
 #define ITEM_POTION 2
-#define ITEM_BOOST_BULLET 3
+#define ITEM_MULTI_BULLET 3
+#define ITEM_BOOST_BULLET 4
 
 class Item {
     public:

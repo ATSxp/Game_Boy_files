@@ -6,6 +6,8 @@
 #include "player.h"
 #include "enemy_common.h"
 #include "enemy_convoy.h"
+#include "options.h"
+#include "game_over.h"
 
 #include "../source/maps/space.h"
 #include "../source/sprites/tileset_space.h"
@@ -16,6 +18,7 @@
 #include "../source/sprites/spr_mega_bullet.h"
 #include "../source/sprites/spr_multi_bullets_item.h"
 #include "../source/sprites/spr_imortality_item.h"
+#include "../source/sprites/spr_buttons.h"
 
 void initGame();
 void initHudPlayer();

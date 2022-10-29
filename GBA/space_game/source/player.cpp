@@ -4,7 +4,7 @@ Ship player( ( SCREEN_WIDTH - 16 ) / 2,  ( SCREEN_HEIGHT - 16 ) / 2, MAX_HP_PLAY
 std::vector< Ship > pb; // Player Bullets
 u16 MAX_PLAYER_TIMER_SHOOT = 10;
 s16 player_timer_shoot = MAX_PLAYER_TIMER_SHOOT, check_slot_bul = 1;
-s16 p_boost_bullets = 0, p_points = 0, p_mega_bullets = 1, p_potions = 0;
+s16 p_boost_bullets = 0, p_points = 0, p_mega_bullets = 1, p_potions = 0, p_multi_bullets = 1;
 
 void initPlayer(){
     loadPalObj(spr_player);
@@ -27,6 +27,8 @@ void updatePlayer(){
         animPlayer();
         updateBulletsPlayer();
         lifePlayer();
+    }else {
+        deadPlayer();
     }
     
     if( p_mega_bullets > 1 ){
@@ -57,7 +59,7 @@ void movePlayer(){
 void playerShoot(){
     if( key_is_down( KEY_A ) && player_timer_shoot <= 0 ){
         newBulletPlayer();
-    }else if( key_hit( KEY_L ) && key_hit( KEY_R ) && p_mega_bullets > 0 ){
+    }else if( key_hit( KEY_L ) && p_mega_bullets > 0 ){
         p_mega_bullets--;
         newMegaBulletPlayer();
     }
@@ -80,7 +82,7 @@ void newBulletPlayer(){
             b.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
             b.sp.setTileId(4);
             
-            b.spd = 4;
+            b.spd = 4 + p_boost_bullets;
             b.dy = -b.spd;
             pb.push_back( Ship( b ) );
         }
@@ -92,10 +94,10 @@ void newBulletPlayer(){
 void newMegaBulletPlayer(){
     if( pb.size() < MAX_PLAYER_BULLETS + 1 ){
         if( spriteIsHided( 61 ) ){
-            Ship b( player.pos.x, player.pos.y, 2 );
+            Ship b( player.pos.x - player.size.w / 2, player.pos.y, 2 );
             b.sp.newSprite( 61 );
             b.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_32 );
-            b.sp.tid = 94;
+            b.sp.tid = 106;
             b.size = { 32, 32 };
             
             b.spd = 2;
@@ -145,5 +147,12 @@ void lifePlayer(){
     if( key_hit( KEY_B ) && p_potions > 0 && player.hp < MAX_HP_PLAYER ){
         p_potions--;
         player.hp += 2;
+    }
+}
+
+void deadPlayer(){
+    player.sp.anim(5, 9, 2);
+    if( player.sp.tid == ( 4 + 9 ) * 4 && player.dead ){
+        player.sp.hide();
     }
 }

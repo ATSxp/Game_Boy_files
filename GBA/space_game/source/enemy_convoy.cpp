@@ -105,13 +105,16 @@ void dropItem( int x, int y ){
 
             switch(_rand_item){
                 case ITEM_MEGA_BULLET:
-                    dropMegaBullet( jump_slot, x, y );
+                    dropItemType(jump_slot, x, y, 74, ITEM_MEGA_BULLET);
                     break;
                 case ITEM_POTION:
-                    dropPotion( jump_slot, x, y );
+                    dropItemType(jump_slot, x, y, 78, ITEM_POTION);
+                    break;
+                case ITEM_MULTI_BULLET:
+                    dropItemType(jump_slot, x, y, 86, ITEM_MULTI_BULLET);
                     break;
                 case ITEM_BOOST_BULLET:
-                    dropBoostBullet( jump_slot, x, y );
+                    dropItemType(jump_slot, x, y, 82, ITEM_BOOST_BULLET);
                     break;
             }
 
@@ -128,39 +131,12 @@ void itemIdValue( u16 id ){
         case ITEM_POTION:
             p_potions++;
             break;
-        case ITEM_BOOST_BULLET:
-            p_boost_bullets++;
+        case ITEM_MULTI_BULLET:
+            p_multi_bullets++;
             MAX_PLAYER_TIMER_SHOOT--;
             break;
+        case ITEM_BOOST_BULLET:
+            p_boost_bullets++;
+            break;
     }
-}
-
-void dropMegaBullet( u16 j_slot, int x, int y){
-    Item m( j_slot + check_slot_to_item, x, y );
-    m.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
-    m.sp.tid = 74;
-    m.sp.prio = 1;
-    m.id = ITEM_MEGA_BULLET;
-
-    items.push_back( Item( m ) );
-}
-
-void dropPotion( u16 j_slot, int x, int y){
-    Item p( j_slot + check_slot_to_item, x, y );
-    p.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
-    p.sp.tid = 78;
-    p.sp.prio = 1;
-    p.id = ITEM_POTION;
-
-    items.push_back( Item( p ) );
-}
-
-void dropBoostBullet( u16 j_slot, int x, int y){
-    Item b( j_slot + check_slot_to_item, x, y );
-    b.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
-    b.sp.tid = 82;
-    b.sp.prio = 1;
-    b.id = ITEM_POTION;
-
-    items.push_back( Item( b ) );
 }
