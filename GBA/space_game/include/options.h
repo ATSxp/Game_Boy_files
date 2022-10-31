@@ -13,11 +13,6 @@ extern u16 LANGUAGE;
 #define LANGUAGE_EN 0
 #define LANGUAGE_PTBR 1
 
-INLINE string translTxt( string txt_en, string txt_ptbr ){
-    if( LANGUAGE == LANGUAGE_PTBR ){
-        return txt_ptbr;
-    }
-    return txt_en;
-}
+#define translTxt(text)((LANGUAGE)==(LANGUAGE_PTBR) ? (PT_##text) : (EN_##text) )
 
 #endif // OPTIONS_H

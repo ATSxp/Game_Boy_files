@@ -2,9 +2,10 @@
 
 Ship player( ( SCREEN_WIDTH - 16 ) / 2,  ( SCREEN_HEIGHT - 16 ) / 2, MAX_HP_PLAYER);
 std::vector< Ship > pb; // Player Bullets
-u16 MAX_PLAYER_TIMER_SHOOT = 10;
-s16 player_timer_shoot = MAX_PLAYER_TIMER_SHOOT, check_slot_bul = 1;
-s16 p_boost_bullets = 0, p_points = 0, p_mega_bullets = 1, p_potions = 0, p_multi_bullets = 1;
+u16 MAX_PLAYER_TIMER_SHOOT = 10, p_imortality_timer;
+s16 player_timer_shoot, check_slot_bul;
+s16 p_boost_bullets = 1, p_points = 0, p_mega_bullets = 1, p_potions = 1, p_multi_bullets = 1, p_imortal_item = 1;
+BOOL p_imortal;
 
 void initPlayer(){
     loadPalObj(spr_player);
@@ -18,6 +19,13 @@ void initPlayer(){
     player.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16);
     player.sp.setTileId(0);
     player.spd = 2;
+
+    p_imortality_timer = MAX_PLAYER_IMORTALITY;
+    check_slot_bul = 1;
+    player_timer_shoot = MAX_PLAYER_TIMER_SHOOT;
+    p_imortal = FALSE;
+
+    pb.clear();
 }
 
 void updatePlayer(){
@@ -27,6 +35,7 @@ void updatePlayer(){
         animPlayer();
         updateBulletsPlayer();
         lifePlayer();
+        useImortalityItem();
     }else {
         deadPlayer();
     }
@@ -115,7 +124,7 @@ void updateBulletsPlayer(){
     for( i = 0; i < pb.size(); i++ ){
         pb[i].update();
 
-        if( pb[i].pos.y < -32 ){
+        if( pb[i].pos.y < -64 ){
             destroyPlayerBullet(i);
         }
     }
@@ -126,7 +135,7 @@ void gameOverPlayer(){
         if( player.shipVsShip( &enemies[i]) && 
             !player.dead && !enemies[i].dead )
         {
-            player.setDamage(1);
+            if( !p_imortal ){player.setDamage(1);}
             enemies[i].dead = TRUE;
         }
     }
@@ -146,7 +155,17 @@ void lifePlayer(){
 
     if( key_hit( KEY_B ) && p_potions > 0 && player.hp < MAX_HP_PLAYER ){
         p_potions--;
-        player.hp += 2;
+        player.hp += qran_range(2, 4);
+    }
+}
+
+void useImortalityItem(){
+    if( p_imortal ){p_imortality_timer--;}
+    if( p_imortality_timer <= 0 ){ p_imortality_timer = MAX_PLAYER_IMORTALITY; p_imortal = FALSE; }
+
+    if( key_hit( KEY_R ) && p_imortal_item > 0 ){
+        p_imortal_item--;
+        p_imortal = TRUE;
     }
 }
 

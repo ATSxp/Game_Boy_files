@@ -1,5 +1,7 @@
 #include "../include/game.h"
 
+extern u32 world_seconds;
+
 using namespace std;
 
 Map spc0(0, BG_CBB(0) | BG_SBB(28) | BG_4BPP | BG_PRIO(2), space_bg0, 32, 64);
@@ -7,6 +9,7 @@ Map spc1(1, BG_CBB(0) | BG_SBB(25) | BG_4BPP | BG_PRIO(1), space_bg1, 32, 64);
 int spc0_y = 0, ptx;
 
 void initGame(){
+    sqran(world_seconds);
     REG_DISPCNT = DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_BG2 | DCNT_OBJ_1D | DCNT_OBJ;
 
     loadPalBg(tileset_space);
@@ -28,19 +31,18 @@ void initGame(){
     initEnemy();
     initConvoys();
     initHudPlayer();
-
-    loadTileObj(spr_mega_bullet, 32);
 }
 
 void updateGame(){
+    updatePlayer();
+    updateEnemies();
+    updateConvoys();
+
     if( player.dead ){
         updateGameOver();
     }else {
         updateHudPlayer();
     }
-    updatePlayer();
-    updateEnemies();
-    updateConvoys();
 
     spc0_y--;
 
@@ -50,6 +52,17 @@ void updateGame(){
     updateVoid();
 }
 
+void endGame(){}
+
+Scene game_scene = {
+    initGame,
+    endGame,
+    updateGame,
+};
+
+// Imortality item
+Sprite im(60);
+
 void initHudPlayer(){
     loadTileObj(spr_hp_player, 8);
     loadTileObj(spr_mega_bullet_slot_and_item , 16);
@@ -58,13 +71,17 @@ void initHudPlayer(){
     loadTileObj(spr_multi_bullets_item, 16);
     loadTileObj(spr_imortality_item, 16);
     loadTileObj(spr_buttons, 16);
+    loadTileObj(spr_mega_bullet, 32);
+    loadTileObj(spr_p_imortality_effect, 16);
 
     SPRITE_TOTAL_OAM += 5;
+
+    im.setAttr(ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16x16);
 }
 
 void updateHudPlayer(){
     // Points
-    string points_txt = translTxt(EN_POINTS, PT_POINTS);
+    string points_txt = translTxt(POINTS);
     ptx = SCREEN_WIDTH - ( ( points_txt.length() - 7 ) * 5 );
 
     tte_write_str("#{es;P:" + to_string(ptx) + ",0}");
@@ -126,11 +143,37 @@ void updateHudPlayer(){
     }else {
         obj_hide(m);
     }
+
+    //Boost Bullet
+    OBJ_ATTR *b = &OBJ_BUFFER[59];
+    obj_set_attr(b, ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16, ATTR2_BUILD(82, 0, 0) );
+    obj_set_pos(b, SCREEN_WIDTH - 49, SCREEN_HEIGHT - 16 );
+
+    if( p_boost_bullets > 0 ){
+        obj_unhide(b, 0);
+    }else {
+        obj_hide(b);
+    }
+
+    // Imortality
+    if( p_imortal_item > 0){
+        im.tid = 90;
+        im.prio = 0;
+
+        im.setPos( SCREEN_WIDTH - 65, SCREEN_HEIGHT - 16 );
+        im.unhide();
+    }else if( p_imortal ){
+        im.anim(31, 7, 8);
+        im.setPos( player.pos.x, player.pos.y );
+    }else {
+        im.hide();
+    }
+    im.update();
 }
 
 void removeEnemies( Ship *t ){
     for( size_t j = 0; j < pb.size(); j++ ){
-        if( t->shipVsShip( &pb[j] ) && !t->damaged && !t->dead && !pb[j].dead ){
+        if( t->shipVsShip( &pb[j] ) && !t->damaged && !t->dead && !pb[j].dead && pb[j].pos.y >= 0 ){
             t->setDamage(1);
 
             if( pb[j].hp < 2 ){

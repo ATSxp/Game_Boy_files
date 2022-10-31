@@ -11,6 +11,36 @@ u16 PAL_IN_BANK_BG = 0;
 void tte_write_str( std::string text ){ tte_write( text.c_str() ); }
 void nocash_puts_str(std::string text){ nocash_puts( text.c_str() ); }
 
+static BOOL scene_changed = FALSE;
+static void nothing(void){};
+
+static Scene next_scene = {
+    nothing,
+    nothing,
+    nothing
+};
+
+static Scene cur_scene = {
+    nothing,
+    nothing,
+    nothing
+};
+
+void setScene(Scene next){
+    scene_changed = TRUE;
+    next_scene = next;
+}
+
+void updateScene(){
+    if( scene_changed ){
+        scene_changed = FALSE;
+        cur_scene.end();
+        cur_scene = next_scene;
+        cur_scene.init();
+    }
+    cur_scene.update();
+}
+
 void initVoid(){
     initOam();
 }
@@ -141,9 +171,9 @@ void Sprite::anim(u16 start, u16 frames, u16 rate){
 
     start = start * size;
 
-    /* if( tid < start ){ */
-    /*     tid = start * size; */
-    /* } */
+    if( tid < start ){
+        tid = start;
+    }
 
     u16 id = tid - start;
     if( tick % rate == 0 ){

@@ -19,10 +19,14 @@
 #include "../source/sprites/spr_multi_bullets_item.h"
 #include "../source/sprites/spr_imortality_item.h"
 #include "../source/sprites/spr_buttons.h"
+#include "../source/sprites/spr_p_imortality_effect.h"
+
+extern Scene game_scene;
 
 void initGame();
 void initHudPlayer();
 void updateGame();
+void endGame();
 void updateHudPlayer();
 
 void destroyPlayerBullet(int i);

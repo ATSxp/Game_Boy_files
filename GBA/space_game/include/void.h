@@ -30,10 +30,10 @@
 #define loadTileObj( name, size ) \
     if( SPRITE_IN_VRAM_OBJ > 0 ){ \
         memcpy16( &tile_mem[ 4 ][ SPRITE_IN_VRAM_OBJ ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) ); \
+        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : ( size == 16 ? name##TilesLen / ( size * 2 ) : ( name##TilesLen / size ) + 2 ) ); \
     }else { \
         memcpy16( &tile_mem[ 4 ][ 0 ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) ); \
+        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : ( size == 16 ? name##TilesLen / ( size * 2 ) : ( name##TilesLen / size ) + 2 ) ); \
     }
 
 #define loadTile( name ) \
@@ -107,10 +107,16 @@ typedef struct {
     u32 w; u32 h;
 } Size;
 
-typedef struct VIEWPORT {
+typedef struct {
     int x, xmin, xmax, xpage;
     int y, ymin, ymax, ypage;
 } VIEWPORT;
+
+typedef struct {
+    void (*init)(void);
+    void (*end)(void);
+    void (*update)(void);
+} Scene;
 
 extern u16 SPRITE_TOTAL_OAM, ID_SLOT_SCAN;
 extern OBJ_ATTR OBJ_BUFFER[ MAX_SPRITES_IN_OAM ];
@@ -192,6 +198,8 @@ class Map{
 
 void tte_write_str( std::string text );
 void nocash_puts_str( std::string text );
+void setScene(Scene next);
+void updateScene();
 void initVoid();
 void updateVoid();
 void resetVoid();

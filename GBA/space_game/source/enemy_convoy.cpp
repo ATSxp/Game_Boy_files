@@ -4,7 +4,7 @@ std::vector< Ship > convoys;
 std::vector< Item > items;
 u16 timer_to_spawn_convoy, check_slot_to_convoy, check_slot_to_item;
 int item_speed = 1;
-u8 drop_item = FALSE;
+u8 drop_item;
 
 void initConvoys(){
     loadTileObj(spr_enemy_convoy, 16);
@@ -13,6 +13,9 @@ void initConvoys(){
 
     timer_to_spawn_convoy = MAX_CONVOYS_TIMER_SPAWN;
     check_slot_to_convoy = 0;
+    convoys.clear();
+    items.clear();
+    drop_item = FALSE;
 }
 
 void newConvoy(){
@@ -97,27 +100,25 @@ void updateItems(){
 }
 
 void dropItem( int x, int y ){
-    vu16 jump_slot = 53;
-    vu32 _rand_item = qran_range(ITEM_MEGA_BULLET, ITEM_BOOST_BULLET);
+    vu32 _rand_item = qran_range(ITEM_MEGA_BULLET, ITEM_IMORTAL);
 
     if( items.size() < MAX_ITEMS ){
-        if( spriteIsHided( jump_slot + check_slot_to_item ) ){
-
-            switch(_rand_item){
-                case ITEM_MEGA_BULLET:
-                    dropItemType(jump_slot, x, y, 74, ITEM_MEGA_BULLET);
-                    break;
-                case ITEM_POTION:
-                    dropItemType(jump_slot, x, y, 78, ITEM_POTION);
-                    break;
-                case ITEM_MULTI_BULLET:
-                    dropItemType(jump_slot, x, y, 86, ITEM_MULTI_BULLET);
-                    break;
-                case ITEM_BOOST_BULLET:
-                    dropItemType(jump_slot, x, y, 82, ITEM_BOOST_BULLET);
-                    break;
-            }
-
+        switch(_rand_item){
+            case ITEM_MEGA_BULLET:
+                dropItemType(x, y, 74, ITEM_MEGA_BULLET);
+                break;
+            case ITEM_POTION:
+                dropItemType(x, y, 78, ITEM_POTION);
+                break;
+            case ITEM_MULTI_BULLET:
+                dropItemType(x, y, 86, ITEM_MULTI_BULLET);
+                break;
+            case ITEM_BOOST_BULLET:
+                dropItemType(x, y, 82, ITEM_BOOST_BULLET);
+                break;
+            case ITEM_IMORTAL:
+                dropItemType(x, y, 90, ITEM_IMORTAL);
+                break;
         }
         check_slot_to_item++;
     }
@@ -137,6 +138,9 @@ void itemIdValue( u16 id ){
             break;
         case ITEM_BOOST_BULLET:
             p_boost_bullets++;
+            break;
+        case ITEM_IMORTAL:
+            p_imortal_item++;
             break;
     }
 }

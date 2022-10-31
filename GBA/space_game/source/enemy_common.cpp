@@ -1,11 +1,13 @@
 #include "../include/enemy_common.h"
 
 std::vector< Ship > enemies; // Todos os inimigos
-int timer_to_spawn_enemy = MAX_ENEMY_TIMER_SPAWN, check_slot_to_enemy = 1;
+int timer_to_spawn_enemy, check_slot_to_enemy;
 
 void initEnemy(){
     loadTileObj(spr_enemy_common, 16);
     enemies.clear();
+    timer_to_spawn_enemy = MAX_ENEMY_TIMER_SPAWN;
+    check_slot_to_enemy = 1;
     SPRITE_TOTAL_OAM += 16;
 }
 

@@ -3,14 +3,30 @@
 u16 gmo_timer = MAX_GAME_OVER_TIMER;
 
 void updateGameOver(){
-    gmo_timer--;
+    obj_hide(&OBJ_BUFFER[ 23 ]);
 
-    if( gmo_timer <=0 ){
+    if( gmo_timer <= 0 ){
+        for(u16 i = 56; i < 61; i++){
+            obj_hide(&OBJ_BUFFER[i]);
+        }
+
         tte_erase_screen();
-        tte_write_str("#{ci:7;P:97,76}Game Over");
+        tte_write_str( translTxt(GAME_OVER) );
 
-        /* if( key_hit( KEY_START ) ){ */
-        /*     r_main = TRUE; */
-        /* } */
+        if( key_hit( KEY_START ) ){ resetGame(); }
+    }else {
+        gmo_timer--;
     }
+}
+
+void resetGame(){
+    resetVoid();
+
+    player.hp = MAX_HP_PLAYER;
+    player.dead = FALSE;
+    player.pos.x = ( SCREEN_WIDTH - 16 ) / 2;
+    player.pos.y = ( SCREEN_HEIGHT - 16 ) / 2;
+
+    gmo_timer = MAX_GAME_OVER_TIMER;
+    setScene(game_scene);
 }

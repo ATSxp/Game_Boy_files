@@ -17,7 +17,7 @@ void Item::update(){
 }
 
 u8 Item::itemVsShip( Ship *s ){
-    if( aabb(pos.x, pos.y, size.w, size.h, 
+    if( aabb(pos.x + size.w / 2, pos.y + size.h / 2, size.w, size.h, 
             s->pos.x, s->pos.y, s->size.w, s->size.h) 
     ){
         return TRUE;
@@ -26,7 +26,7 @@ u8 Item::itemVsShip( Ship *s ){
 }
 
 void Item::chase(int to_x, int to_y){
-    u16 _range = 80;
+    u16 _range = 320;
 
     s16 ddx = to_x - pos.x, ddy = to_y - pos.y;
     s16 dst = Sqrt( ( ddx * ddx ) + ( ddy * ddy ) );

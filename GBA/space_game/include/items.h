@@ -8,6 +8,7 @@
 #define ITEM_POTION 2
 #define ITEM_MULTI_BULLET 3
 #define ITEM_BOOST_BULLET 4
+#define ITEM_IMORTAL 5
 
 class Item {
     public:

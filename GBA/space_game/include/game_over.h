@@ -2,7 +2,7 @@
 #define GAME_OVER_H
 
 #include "void.h"
-#include "player.h"
+#include "game.h"
 
 #define MAX_GAME_OVER_TIMER 90
 
@@ -10,5 +10,6 @@
 extern u16 gmo_timer;
 
 void updateGameOver();
+void resetGame();
 
 #endif // GAME_OVER_H
