@@ -8,6 +8,29 @@ u16 SPRITE_IN_VRAM_TILE = 0;
 u16 PAL_IN_BANK_OBJ = 0;
 u16 PAL_IN_BANK_BG = 0;
 
+int shake_t = 0;
+u32 shake = 0, shake_bg = 0, shake_mag;
+BOOL shaking = FALSE;
+void shakeScreen( u32 amt, u32 bg, u32 mag){
+    if( amt > shake ){ shake = amt; }
+    shake_bg = bg;
+    shake_mag = mag;
+}
+
+void updateShakeScreen(){
+    shake_t++;
+
+    if( shake > 0 ){
+        shaking = TRUE;
+        shake--;
+        REG_BG_OFS[ shake_bg ].x = -( ( shake_t >> 1 ) % 2 * shake_mag );
+    }else {
+        shaking = FALSE;
+        REG_BG_OFS[ shake_bg ].x = 0;
+    }
+
+}
+
 void tte_write_str( std::string text ){ tte_write( text.c_str() ); }
 void nocash_puts_str(std::string text){ nocash_puts( text.c_str() ); }
 

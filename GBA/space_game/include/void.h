@@ -3,6 +3,9 @@
 
 #include <tonc.h>
 #include <string>
+#include <stdio.h>
+
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 #define MAX_SPRITES_IN_OAM 128
 
@@ -196,9 +199,13 @@ class Map{
 /*         void fadeOut( u16 spd = 1 ); */
 /* }; */
 
+extern BOOL shaking;
+
 void tte_write_str( std::string text );
 void nocash_puts_str( std::string text );
 void setScene(Scene next);
+void shakeScreen( u32 amt, u32 bg, u32 mag );
+void updateShakeScreen();
 void updateScene();
 void initVoid();
 void updateVoid();

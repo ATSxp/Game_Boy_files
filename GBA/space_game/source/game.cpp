@@ -4,9 +4,11 @@ extern u32 world_seconds;
 
 using namespace std;
 
-Map spc0(0, BG_CBB(0) | BG_SBB(28) | BG_4BPP | BG_PRIO(2), space_bg0, 32, 64);
-Map spc1(1, BG_CBB(0) | BG_SBB(25) | BG_4BPP | BG_PRIO(1), space_bg1, 32, 64);
 int spc0_y = 0, ptx;
+BOOL ready = FALSE;
+// Imortality item
+Sprite im;
+Sprite imf;
 
 void initGame(){
     sqran(world_seconds);
@@ -15,7 +17,13 @@ void initGame(){
     loadPalBg(tileset_space);
     loadTile(tileset_space);
 
+    Map spc0(0, BG_CBB(0) | BG_SBB(28) | BG_4BPP | BG_PRIO(2), space_bg0, 32, 64);
+    Map spc1(1, BG_CBB(0) | BG_SBB(25) | BG_4BPP | BG_PRIO(1), space_bg1, 32, 64);
+
     memcpy16(pal_bg_bank[15], tileset_spacePal, tileset_spacePalLen / 2);
+
+    im.newSprite(60);
+    imf.newSprite(55);
 
     tte_init_chr4c(
             2, 
@@ -34,20 +42,36 @@ void initGame(){
 }
 
 void updateGame(){
-    updatePlayer();
-    updateEnemies();
-    updateConvoys();
+    if( !ready ){
+        im.hide();
+        imf.hide();
 
-    if( player.dead ){
-        updateGameOver();
+        player.dy = -( player.spd >> 1 );
+
+        if( player.pos.y < ( SCREEN_HEIGHT >> 1 ) + 16 ){
+            player.dy = 0;
+            ready = TRUE;
+        }
     }else {
-        updateHudPlayer();
+        updateEnemies();
+        updateConvoys();
+
+        if( player.dead ){
+            updateGameOver();
+        }else {
+            updateHudPlayer();
+        }
+
     }
+
+    updatePlayer();
 
     spc0_y--;
 
     REG_BG_OFS[0].y = spc0_y;
     REG_BG_OFS[1].y = spc0_y * 3;
+
+    updateShakeScreen();
 
     updateVoid();
 }
@@ -59,9 +83,6 @@ Scene game_scene = {
     endGame,
     updateGame,
 };
-
-// Imortality item
-Sprite im(60);
 
 void initHudPlayer(){
     loadTileObj(spr_hp_player, 8);
@@ -77,6 +98,7 @@ void initHudPlayer(){
     SPRITE_TOTAL_OAM += 5;
 
     im.setAttr(ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16x16);
+    imf.setAttr(ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16x16);
 }
 
 void updateHudPlayer(){
@@ -156,19 +178,23 @@ void updateHudPlayer(){
     }
 
     // Imortality
-    if( p_imortal_item > 0){
+    if( p_imortal_item > 0 ){
         im.tid = 90;
         im.prio = 0;
 
         im.setPos( SCREEN_WIDTH - 65, SCREEN_HEIGHT - 16 );
         im.unhide();
-    }else if( p_imortal ){
-        im.anim(31, 7, 8);
-        im.setPos( player.pos.x, player.pos.y );
     }else {
         im.hide();
     }
     im.update();
+
+    if( p_imortal ){
+        imf.anim(31, 7, 8);
+        imf.setPos( player.pos.x, player.pos.y );
+        imf.update();
+        imf.unhide();
+    }else{ imf.hide(); }
 }
 
 void removeEnemies( Ship *t ){

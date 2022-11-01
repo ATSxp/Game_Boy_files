@@ -30,14 +30,15 @@ void Item::chase(int to_x, int to_y){
 
     s16 ddx = to_x - pos.x, ddy = to_y - pos.y;
     s16 dst = Sqrt( ( ddx * ddx ) + ( ddy * ddy ) );
+    s16 a = ArcTan2(ddx, ddy);
 
     if( dst <= _range ){
         if( ABS( ddx ) >= spd ){
-            dx = ddx > 0 ? spd : -spd;
+            dx = ( ( lu_cos(a) >> 8 ) - ( spd << 4 ) ) >> 2;
         }
 
         if( ABS( ddy ) >= spd ){
-            dy = ddy > 0 ? spd : -spd;
+            dy = ( ( lu_sin(a) >> 8 ) - ( spd << 4 ) ) >> 2;
         }
     }
 }

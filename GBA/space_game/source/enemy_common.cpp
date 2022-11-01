@@ -7,7 +7,7 @@ void initEnemy(){
     loadTileObj(spr_enemy_common, 16);
     enemies.clear();
     timer_to_spawn_enemy = MAX_ENEMY_TIMER_SPAWN;
-    check_slot_to_enemy = 1;
+    check_slot_to_enemy = 0;
     SPRITE_TOTAL_OAM += 16;
 }
 
@@ -37,7 +37,7 @@ void updateEnemies(){
     newEnemy();
 
     timer_to_spawn_enemy--;
-    if( check_slot_to_enemy > MAX_ENEMIES ){ check_slot_to_enemy = 1; }
+    if( check_slot_to_enemy > MAX_ENEMIES ){ check_slot_to_enemy = 0; }
 
     size_t i;
     for( i = 0; i < enemies.size(); i++ ){

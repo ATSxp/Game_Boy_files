@@ -15,7 +15,8 @@ class Item {
         u8 dead = FALSE;
         Axis pos = { 0, 0 };
         Size size = { 8, 8 };
-        int dx = 0, dy = 0, spd = 1;
+        int dx = 0, dy = 0;
+        FIXED spd = 1 >> 1;
         Sprite sp;
         u16 id;
 

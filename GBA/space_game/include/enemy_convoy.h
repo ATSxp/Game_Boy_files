@@ -31,7 +31,7 @@ INLINE void dropItemType( int x, int y, u16 tid, u16 id ){
         i.sp.tid = tid;
         i.sp.prio = 1;
         i.id = id;
-        i.spd = 2;
+        i.spd = ( 1 >> 6 ) >> 2;
 
         items.push_back( Item( i ) );
     }

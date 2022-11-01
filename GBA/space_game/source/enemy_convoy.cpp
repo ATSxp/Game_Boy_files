@@ -2,8 +2,7 @@
 
 std::vector< Ship > convoys;
 std::vector< Item > items;
-u16 timer_to_spawn_convoy, check_slot_to_convoy, check_slot_to_item;
-int item_speed = 1;
+u16 timer_to_spawn_convoy, check_slot_to_convoy, check_slot_to_item, timer_to_move, MAX_TIMER_TO_MOVE = 80;
 u8 drop_item;
 
 void initConvoys(){
@@ -35,6 +34,7 @@ void newConvoy(){
 
                 convoys.push_back( Ship( c ) );
                 timer_to_spawn_convoy = MAX_CONVOYS_TIMER_SPAWN;
+                timer_to_move = MAX_TIMER_TO_MOVE;
             }
             check_slot_to_convoy++;
         }
@@ -75,6 +75,13 @@ void updateConvoys(){
             convoys[i].sp.pal = 1;
         }else {
             convoys[i].sp.pal = 0;
+        }
+
+        if( convoys[i].pos.y >= ( SCREEN_HEIGHT / 2 ) - 32 && timer_to_move > 0 ){
+            timer_to_move--;
+            convoys[i].dy = 0;
+        }else if( timer_to_move <= 0 ){
+            convoys[i].dy = convoys[i].spd;
         }
 
         convoys[i].update();

@@ -1,5 +1,6 @@
 #include "../include/game_over.h"
 
+extern BOOL ready;
 u16 gmo_timer = MAX_GAME_OVER_TIMER;
 
 void updateGameOver(){
@@ -21,11 +22,15 @@ void updateGameOver(){
 
 void resetGame(){
     resetVoid();
+    tte_erase_screen();
 
+    ready = FALSE;
+    player.dx = 0;
+    player.dy = 0;
     player.hp = MAX_HP_PLAYER;
     player.dead = FALSE;
     player.pos.x = ( SCREEN_WIDTH - 16 ) / 2;
-    player.pos.y = ( SCREEN_HEIGHT - 16 ) / 2;
+    player.pos.y = SCREEN_HEIGHT;
 
     gmo_timer = MAX_GAME_OVER_TIMER;
     setScene(game_scene);
