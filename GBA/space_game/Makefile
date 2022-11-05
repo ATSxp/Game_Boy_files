@@ -22,12 +22,12 @@ include $(DEVKITARM)/gba_rules
 #---------------------------------------------------------------------------------
 TARGET		:= $(notdir $(CURDIR))
 BUILD		:= build
-SOURCES		:= source source/sprites source/maps
+SOURCES		:= source source/maps #source/sprites 
 INCLUDES	:= include
 ROMTITLE 	:= STERUS
 ROMCODE 	:= BSE
 VERSION 	:= 0.1
-DATA		:=
+DATA		:= data/imgs/bins
 MUSIC		:= #audio
 
 #---------------------------------------------------------------------------------

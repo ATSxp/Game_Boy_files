@@ -13,14 +13,14 @@
 class Item {
     public:
         u8 dead = FALSE;
-        Axis pos = { 0, 0 };
+        Axis pos;
         Size size = { 8, 8 };
         int dx = 0, dy = 0;
         FIXED spd = 1 >> 1;
         Sprite sp;
         u16 id;
 
-        Item( u16 slot, int x = 0, int y = 0 );
+        Item( u16 slot = -1, int x = 0, int y = 0 );
         u8 itemVsShip( Ship *s );
         void update();
         void chase( int to_x, int to_y );

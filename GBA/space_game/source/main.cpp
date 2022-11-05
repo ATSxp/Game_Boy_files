@@ -1,10 +1,10 @@
 /*! TODO: 
- * - Adicionar seed random;
  * - Tela de Game over;
  * - Boss;
  * - Sfx;
  * - Bg music;
- * - itens ( moedas, mega-balas, imortalidade, tiros-super-rápidos );
+ * - Cutscenes ( Bitmap );
+ * - novo inimigo ( Sniper );
 */
 
 #include "../include/void.h"
@@ -22,7 +22,8 @@ int main(){
     REG_TM2CNT = TM_ENABLE | TM_FREQ_1024;
     REG_TM3CNT = TM_ENABLE | TM_CASCADE;
 
-    setScene(menu_scene);
+    /* setScene(menu_scene); */
+    setScene(game_scene);
 
     while(TRUE){
         VBlankIntrWait(); // Vsync

@@ -3,10 +3,12 @@
 
 #include "void.h"
 #include "game.h"
+#include "texts_ptbr.h"
+#include "texts_en.h"
 
 using namespace std;
 
-#include "../source/sprites/spr_p_item_slot.h"
+#include "spr_menu_cursor_pal_bin.h"
 
 extern Scene menu_scene;
 

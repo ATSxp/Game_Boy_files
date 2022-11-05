@@ -1,57 +1,54 @@
 #include "../include/options.h"
 
-u16 LANGUAGE = LANGUAGE_PTBR;
+u16 LANGUAGE = LANGUAGE_EN;
 
 int cursor_x, cursor_y;
 u16 gui_cursor = 0, cursor_space;
 BOOL cursor_center;
 
-typedef struct {
-    u16 slot, tid;
-    int x, y;
-}c_spr;
+Sprite cursor_spr;
+ButtonGUI *btns;
+u16 _total_btns, _clrs[2];
+vu16 _tid;
 
-c_spr cursor_spr[4] = {
-    { 0, 0 },
-    { 1, 1 },
-    { 2, 2 },
-    { 3, 3 },
-};
+void initGUI( u16 slot_obj, ButtonGUI *btn_list, cu16 total_btns, int x, int y, u16 space, vector<u16> clrs, BOOL center){
+    btns = btn_list;
+    _total_btns = total_btns;
+    _clrs[0] = clrs[0];
+    _clrs[1] = clrs[1];
 
-void initGUI( int x, int y, u16 space, BOOL center){
-    loadTileObj(spr_p_item_slot, 16);
+    loadTileObj(spr_menu_cursor, 8);
+    _tid = SPRITE_IN_VRAM_OBJ - 4;
+
+    cursor_spr.newSprite(slot_obj);
+    cursor_spr.flip_h = TRUE;
 
     cursor_x = x;
     cursor_y = y;
     cursor_space = space;
     cursor_center = center;
 
-    SPRITE_TOTAL_OAM += 4;
+    SPRITE_TOTAL_OAM += 1;
 }
 
-void updateGUI( ButtonGUI btns[], u16 total_btns ){
-    vs32 n_len;
+void updateGUI(){
+    tte_erase_screen();
 
     if( key_hit( KEY_UP ) && gui_cursor > 0 ){
         gui_cursor--;
-    }else if( key_hit( KEY_DOWN ) && gui_cursor < total_btns - 1 ){
+    }else if( key_hit( KEY_DOWN ) && gui_cursor < _total_btns - 1 ){
         gui_cursor++;
     }
 
-    nocash_puts_str( to_string( gui_cursor ) );
-
-    tte_erase_screen();
-    for( int ii = 0; ii < total_btns; ii++ ){
+    for( int ii = 0; ii < _total_btns; ii++ ){
         if( gui_cursor == ii ){
-            btns[ii].c = 8;
-        }else { btns[ii].c = 7; }
+            btns[ii].c = _clrs[1];
+        }else { btns[ii].c = _clrs[0]; }
 
-        string cmd = "#{P:-32,-32;ci:"+ to_string( btns[ii].c ) +"}";
-        string n = cmd + btns[ii].name;
+        string _cmd = "#{ci:"+ to_string( btns[ii].c ) +"}";
+        tte_cmd_default(_cmd.c_str());
 
-        n_len = tte_write( n.c_str() );
-
-        if( n_len < 18 ){ btns[ii].w = ( n_len - 17 ) * 5; }else { btns[ii].w = ( n_len - 18 ) * 5; }
+        btns[ii].w = btns[ii].name.length() * ( LANGUAGE == LANGUAGE_EN ? 6 : 5 );
         btns[ii].h = 8;
 
         if( cursor_center ){
@@ -62,31 +59,20 @@ void updateGUI( ButtonGUI btns[], u16 total_btns ){
         btns[ii].y = cursor_space * ii + cursor_y;
 
         tte_set_pos( btns[ii].x, btns[ii].y );
-        tte_write_str( btns[ii].name );
+        tte_write_str( "#{ci:" + to_string(btns[ii].c) + "}" + btns[ii].name );
     }
 
-    for( int jj = 0; jj < 4; jj++ ){
-        // Topo esquerdo
-        cursor_spr[0].x = btns[ gui_cursor ].x - 4;
-        cursor_spr[0].y = btns[ gui_cursor ].y - 2;
+    cursor_spr.setAttr( ATTR0_4BPP | ATTR0_SQUARE, ATTR1_SIZE_8x8 );
+    cursor_spr.setPos( ( btns[ gui_cursor ].x + btns[ gui_cursor ].w ) + btns[ gui_cursor ].offset, btns[ gui_cursor ].y + 2 );
+    cursor_spr.anim(_tid, 4, 12);
 
-        // Topo direito
-        cursor_spr[1].x = btns[ gui_cursor ].x + btns[ gui_cursor ].w;
-        cursor_spr[1].y = btns[ gui_cursor ].y - 2;
+    cursor_spr.update();
 
-        // Baixo esquerdo
-        cursor_spr[2].x = btns[ gui_cursor ].x - 4;
-        cursor_spr[2].y = btns[ gui_cursor ].y + 6;
-
-        // Baixo direito
-        cursor_spr[3].x = btns[ gui_cursor ].x + btns[ gui_cursor ].w;
-        cursor_spr[3].y = btns[ gui_cursor ].y + 6;
-
-        obj_set_attr( &OBJ_BUFFER[ cursor_spr[jj].slot ],  ATTR0_4BPP | ATTR0_SQUARE, ATTR1_SIZE_8x8, ATTR2_BUILD(cursor_spr[jj].tid, 0, 0) );
-        obj_set_pos( &OBJ_BUFFER[ cursor_spr[jj].slot ], cursor_spr[jj].x, cursor_spr[jj].y);
-    }
-
-    if( key_hit( KEY_A ) ){
+    if( key_hit( KEY_A ) && btns[ gui_cursor ].action != NULL ){
         btns[ gui_cursor ].action();
     }
+}
+
+void resetGUI(){
+    gui_cursor = 0;
 }

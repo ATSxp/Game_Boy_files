@@ -1,19 +1,18 @@
 #include "../include/items.h"
 
 Item::Item( u16 slot, int x, int y ){
-    this->sp.newSprite(slot);
-    this->pos.x = x;
-    this->pos.y = y;
+    sp.newSprite(slot);
+    pos.x = x;
+    pos.y = y;
 }
 
 void Item::update(){
     if( !dead ){
-
         pos.x += dx;
         pos.y += dy;
-        sp.update();
-        sp.setPos(pos.x, pos.y);
     }
+    sp.setPos(pos.x, pos.y);
+    sp.update();
 }
 
 u8 Item::itemVsShip( Ship *s ){

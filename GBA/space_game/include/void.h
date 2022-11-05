@@ -32,82 +32,82 @@
 
 #define loadTileObj( name, size ) \
     if( SPRITE_IN_VRAM_OBJ > 0 ){ \
-        memcpy16( &tile_mem[ 4 ][ SPRITE_IN_VRAM_OBJ ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : ( size == 16 ? name##TilesLen / ( size * 2 ) : ( name##TilesLen / size ) + 2 ) ); \
+        memcpy16( &tile_mem[ 4 ][ SPRITE_IN_VRAM_OBJ ], name##_img_bin, name##_img_bin_size / 2 ); \
+        addSIVO( size == 8 ? name##_img_bin_size / ( size * 4 ) : ( size == 16 ? name##_img_bin_size / ( size * 2 ) : ( name##_img_bin_size / size ) + 2 ) ); \
     }else { \
-        memcpy16( &tile_mem[ 4 ][ 0 ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : ( size == 16 ? name##TilesLen / ( size * 2 ) : ( name##TilesLen / size ) + 2 ) ); \
+        memcpy16( &tile_mem[ 4 ][ 0 ], name##_img_bin, name##_img_bin_size / 2 ); \
+        addSIVO( size == 8 ? name##_img_bin_size / ( size * 4 ) : ( size == 16 ? name##_img_bin_size / ( size * 2 ) : ( name##_img_bin_size / size ) + 2 ) ); \
     }
 
 #define loadTile( name ) \
     if( SPRITE_IN_VRAM_TILE > 0 ){ \
-        memcpy16( &tile_mem[ 0 ][ SPRITE_IN_VRAM_TILE ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVT( name##TilesLen / 8 ); \
+        memcpy16( &tile_mem[ 0 ][ SPRITE_IN_VRAM_TILE ], name##_img_bin, name##_img_bin_size / 2 ); \
+        addSIVT( name##_img_bin_size / 8 ); \
     }else { \
-        memcpy16( &tile_mem[ 0 ][ 0 ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVT( name##TilesLen / 8 ); \
+        memcpy16( &tile_mem[ 0 ][ 0 ], name##_img_bin, name##_img_bin_size / 2 ); \
+        addSIVT( name##_img_bin_size / 8 ); \
     }
 
-#define loadTileObj8bpp( name, size ) \
-    if( SPRITE_IN_VRAM_OBJ > 0 ){ \
-        memcpy16( &tile8_mem[ 4 ][ SPRITE_IN_VRAM_OBJ ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) ); \
-    }else { \
-        memcpy16( &tile8_mem[ 4 ][ 0 ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) ); \
-    }
+/* #define loadTileObj8bpp( name, size ) \ */
+/*     if( SPRITE_IN_VRAM_OBJ > 0 ){ \ */
+/*         memcpy16( &tile8_mem[ 4 ][ SPRITE_IN_VRAM_OBJ ], name##Tiles, name##TilesLen / 2 ); \ */
+/*         addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) ); \ */
+/*     }else { \ */
+/*         memcpy16( &tile8_mem[ 4 ][ 0 ], name##Tiles, name##TilesLen / 2 ); \ */
+/*         addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) ); \ */
+/*     } */
 
-#define loadTile8bpp( name ) \
-    if( SPRITE_IN_VRAM_TILE > 0 ){ \
-        memcpy16( &tile8_mem[ 0 ][ SPRITE_IN_VRAM_TILE ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVT( name##TilesLen / 8 ); \
-    }else { \
-        memcpy16( &tile8_mem[ 0 ][ 0 ], name##Tiles, name##TilesLen / 2 ); \
-        addSIVT( 1 ); \
-    }
+/* #define loadTile8bpp( name ) \ */
+/*     if( SPRITE_IN_VRAM_TILE > 0 ){ \ */
+/*         memcpy16( &tile8_mem[ 0 ][ SPRITE_IN_VRAM_TILE ], name##Tiles, name##TilesLen / 2 ); \ */
+/*         addSIVT( name##TilesLen / 8 ); \ */
+/*     }else { \ */
+/*         memcpy16( &tile8_mem[ 0 ][ 0 ], name##Tiles, name##TilesLen / 2 ); \ */
+/*         addSIVT( 1 ); \ */
+/*     } */
 
-#define loadTileObjLZ77Vram( name, size ) \
-    if( SPRITE_IN_VRAM_OBJ > 0 ){ \
-        LZ77UnCompVram( name##Tiles, &tile_mem[ 4 ][ SPRITE_IN_VRAM_OBJ ] ); \
-        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) + 1 ); \
-    }else { \
-        LZ77UnCompVram( name##Tiles, &tile_mem[ 4 ][ 0 ] ); \
-        addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) + 1 ); \
-    }
+/* #define loadTileObjLZ77Vram( name, size ) \ */
+/*     if( SPRITE_IN_VRAM_OBJ > 0 ){ \ */
+/*         LZ77UnCompVram( name##Tiles, &tile_mem[ 4 ][ SPRITE_IN_VRAM_OBJ ] ); \ */
+/*         addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) + 1 ); \ */
+/*     }else { \ */
+/*         LZ77UnCompVram( name##Tiles, &tile_mem[ 4 ][ 0 ] ); \ */
+/*         addSIVO( size == 8 ? name##TilesLen / ( size * 4 ) : name##TilesLen / ( size * 2 ) + 1 ); \ */
+/*     } */
 
-#define loadTileLZ77Vram( name ) \
-    if( SPRITE_IN_VRAM_TILE > 0 ){ \
-        LZ77UnCompVram( name##Tiles, &tile_mem[ 0 ][ SPRITE_IN_VRAM_TILE ] ); \
-        addSIVT( name##TilesLen / 8 ); \
-    }else { \
-        LZ77UnCompVram( name##Tiles, &tile_mem[ 0 ][ 0 ] ); \
-        addSIVT( name##TilesLen / 8 ); \
-    }
+/* #define loadTileLZ77Vram( name ) \ */
+/*     if( SPRITE_IN_VRAM_TILE > 0 ){ \ */
+/*         LZ77UnCompVram( name##Tiles, &tile_mem[ 0 ][ SPRITE_IN_VRAM_TILE ] ); \ */
+/*         addSIVT( name##TilesLen / 8 ); \ */
+/*     }else { \ */
+/*         LZ77UnCompVram( name##Tiles, &tile_mem[ 0 ][ 0 ] ); \ */
+/*         addSIVT( name##TilesLen / 8 ); \ */
+/*     } */
 
 #define loadPalObj( name ) \
     if( PAL_IN_BANK_OBJ > 0 ){ \
-        memcpy16( &pal_obj_mem[ PAL_IN_BANK_OBJ ], name##Pal, name##PalLen / 2 ); \
-        addPIBO( ( name##PalLen / 2 ) + 1 ); \
+        memcpy16( &pal_obj_mem[ PAL_IN_BANK_OBJ ], name##_pal_bin, name##_pal_bin_size / 2 ); \
+        addPIBO( ( name##_pal_bin_size / 2 ) + 1 ); \
     }else { \
-        memcpy16( &pal_obj_mem[ 0 ], name##Pal, name##PalLen / 2 ); \
-        addPIBO( ( name##PalLen / 2 ) + 1 ); \
+        memcpy16( &pal_obj_mem[ 0 ], name##_pal_bin, name##_pal_bin_size / 2 ); \
+        addPIBO( ( name##_pal_bin_size / 2 ) + 1 ); \
     } \
 
 #define loadPalBg( name ) \
     if( PAL_IN_BANK_BG > 0 ){ \
-        memcpy16( &pal_bg_mem[ PAL_IN_BANK_BG ], name##Pal, name##PalLen / 2 ); \
-        addPIBB( ( name##PalLen / 2 ) + 1 ); \
+        memcpy16( &pal_bg_mem[ PAL_IN_BANK_BG ], name##_pal_bin, name##_pal_bin_size / 2 ); \
+        addPIBB( ( name##_pal_bin_size / 2 ) + 1 ); \
     }else { \
-        memcpy16( &pal_bg_mem[ 0 ], name##Pal, name##PalLen / 2 ); \
-        addPIBB( ( name##PalLen / 2 ) + 1 ); \
+        memcpy16( &pal_bg_mem[ 0 ], name##_pal_bin, name##_pal_bin_size / 2 ); \
+        addPIBB( ( name##_pal_bin_size / 2 ) + 1 ); \
     } \
 
 typedef struct {
-    int x; int y;
+    int x, y;
 } Axis;
 
 typedef struct {
-    u32 w; u32 h;
+    int w, h;
 } Size;
 
 typedef struct {
@@ -157,7 +157,7 @@ class Sprite {
 };
 
 u8 aabb( int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2 );
-u8 spriteIsHided( u16 slot );
+BOOL spriteIsHided( u16 slot );
 void initOam();
 void updateOam();
 u8 checkSpriteIsHided( u16 id );

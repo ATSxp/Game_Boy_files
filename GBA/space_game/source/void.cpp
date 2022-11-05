@@ -95,7 +95,7 @@ u16 mget(int x, int y, cu16 *bg, u16 map_width){
 void mset(int x, int y, u8 t, u16 *bg, u16 map_width){
 }
 
-u8 spriteIsHided( u16 slot ){
+BOOL spriteIsHided( u16 slot ){
     if( ( OBJ_BUFFER[ slot ].attr0 & ATTR0_MODE_MASK ) == ATTR0_HIDE ){
         return TRUE;
     }
@@ -140,12 +140,12 @@ void Sprite::update(){
     size.w = getWidth();
     size.h = getHeight();
 
-    obj_set_attr( spr, spr->attr0, spr->attr1, ATTR2_BUILD(tid, pal, prio) );
-    obj_set_pos( spr, pos.x, pos.y );
+    obj_set_attr( &OBJ_BUFFER[ slot_in_oam ], spr->attr0, spr->attr1, ATTR2_BUILD(tid, pal, prio) );
+    obj_set_pos( &OBJ_BUFFER[ slot_in_oam ], pos.x, pos.y );
 }
 
 Size Sprite::getSize(){
-    vu32 _w = obj_get_width(spr), _h = obj_get_height(spr);
+    vs32 _w = obj_get_width(spr), _h = obj_get_height(spr);
     return { _w, _h };
 }
 

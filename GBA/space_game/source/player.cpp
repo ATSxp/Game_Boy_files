@@ -1,11 +1,10 @@
 #include "../include/player.h"
 
-extern BOOL ready;
 Ship player( ( SCREEN_WIDTH - 16 ) / 2, SCREEN_HEIGHT, MAX_HP_PLAYER);
 std::vector< Ship > pb; // Player Bullets
 u16 MAX_PLAYER_TIMER_SHOOT = 12, p_imortality_timer;
 s16 player_timer_shoot, check_slot_bul, p_boost_bullets = 1, p_points = 0, p_mega_bullets = 1, p_potions = 1, p_multi_bullets = 1, p_imortal_item = 1;
-BOOL p_imortal;
+BOOL p_imortal, p_can_move;
 
 void initPlayer(){
     loadPalObj(spr_player);
@@ -15,6 +14,7 @@ void initPlayer(){
 
     SPRITE_TOTAL_OAM += 33;
 
+    player.id = ID_PLAYER;
     player.sp.newSprite(0);
     player.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16);
     player.sp.setTileId(0);
@@ -24,6 +24,7 @@ void initPlayer(){
     check_slot_bul = 1;
     player_timer_shoot = MAX_PLAYER_TIMER_SHOOT;
     p_imortal = FALSE;
+    p_can_move = FALSE;
 
     pb.clear();
 }
@@ -51,7 +52,7 @@ void updatePlayer(){
 }
 
 void movePlayer(){
-    if( ready ){
+    if( p_can_move ){
         player.dx = 0;
         player.dy = 0;
 
@@ -70,7 +71,7 @@ void movePlayer(){
 }
 
 void playerShoot(){
-    if( ready ){
+    if( p_can_move ){
         if( key_is_down( KEY_A ) && player_timer_shoot <= 0 ){
             newBulletPlayer();
         }else if( key_hit( KEY_L ) && p_mega_bullets > 0 ){
@@ -98,6 +99,7 @@ void newBulletPlayer(){
     if( pb.size() < MAX_PLAYER_BULLETS ){
         if( spriteIsHided( check_slot_bul ) ){
             Ship b( player.pos.x, player.pos.y, 1 );
+            b.id = ID_PLAYER_BULLET;
             b.sp.newSprite( check_slot_bul );
             b.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
             b.sp.setTileId(4);
@@ -107,7 +109,7 @@ void newBulletPlayer(){
             pb.push_back( Ship( b ) );
         }
         player_timer_shoot = MAX_PLAYER_TIMER_SHOOT;
-        ++check_slot_bul;
+        check_slot_bul++;
     }
 }
 
@@ -131,30 +133,24 @@ void updateBulletsPlayer(){
     player_timer_shoot--;
     if( check_slot_bul > MAX_PLAYER_BULLETS - 1 ){ check_slot_bul = 1; }
 
-    size_t i;
-    for( i = 0; i < pb.size(); i++ ){
-        pb[i].update();
-
+    for( size_t i = 0; i < pb.size(); i++ ){
         if( pb[i].pos.y < -64 ){
+            pb[i].dy = 0;
             destroyPlayerBullet(i);
         }
+
+        pb[i].update();
     }
 }
 
 void gameOverPlayer(){
-    for( size_t i = 0; i < enemies.size(); i++ ){
-        if( player.shipVsShip( &enemies[i]) && 
-            !player.dead && !enemies[i].dead && enemies[i].pos.y < SCREEN_HEIGHT - 16 )
-        {
-            if( !p_imortal ){player.setDamage(1);}
-            enemies[i].dead = TRUE;
-        }
-    }
+    for( size_t i = 0; i < enemies.size(); i++ ) checkPlayerDamage(&enemies[i]);
+    for( size_t k = 0; k < snipers.size(); k++ ) checkPlayerDamage(&snipers[k]);
 
     for( size_t j = 0; j < pb.size(); j++ ){
         if( player.dead ){
             pb[j].sp.hide();
-            pb.erase( pb.begin() + j );
+            pb.clear();
         }
     }
 }
@@ -164,9 +160,9 @@ void lifePlayer(){
         player.hp = MAX_HP_PLAYER;
     }
 
-    if( key_hit( KEY_B ) && p_potions > 0 && player.hp < MAX_HP_PLAYER && ready ){
+    if( key_hit( KEY_B ) && p_potions > 0 && player.hp < MAX_HP_PLAYER && p_can_move ){
         p_potions--;
-        player.hp += qran_range(2, 4);
+        player.hp += qran_range(1, MAX_HP_PLAYER - 1 );
     }
 }
 
@@ -174,7 +170,7 @@ void useImortalityItem(){
     if( p_imortal ){p_imortality_timer--;}
     if( p_imortality_timer <= 0 ){ p_imortality_timer = MAX_PLAYER_IMORTALITY; p_imortal = FALSE; }
 
-    if( key_hit( KEY_R ) && p_imortal_item > 0 && !p_imortal && ready ){
+    if( key_hit( KEY_R ) && p_imortal_item > 0 && !p_imortal && p_can_move ){
         p_imortal_item--;
         p_imortal = TRUE;
     }

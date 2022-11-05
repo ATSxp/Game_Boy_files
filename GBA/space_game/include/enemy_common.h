@@ -7,7 +7,8 @@
 #include "player.h"
 #include "game.h"
 
-#include "../source/sprites/spr_enemy_common.h"
+#include "spr_enemy_common_pal_bin.h"
+#include "spr_enemy_common_img_bin.h"
 
 #define MAX_ENEMIES 16
 #define MAX_ENEMY_TIMER_SPAWN 50

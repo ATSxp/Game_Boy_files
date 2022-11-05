@@ -19,6 +19,7 @@ void newEnemy(){
         if( enemies.size() < MAX_ENEMIES ){
             if( spriteIsHided( jump_slots + check_slot_to_enemy ) ){
                 Ship e( nx, ny, 2 );
+                e.id = ID_ENEMY_COMMON;
                 e.sp.newSprite( jump_slots + check_slot_to_enemy );
                 e.sp.setAttr( ATTR0_4BPP | ATTR0_SHAPE(0), ATTR1_SIZE_16 );
                 e.sp.setTileId(14);
@@ -44,22 +45,13 @@ void updateEnemies(){
         removeEnemies( &enemies[i] );
 
         if( enemies[i].pos.y > SCREEN_HEIGHT ){
+            enemies[i].sp.hide();
             enemies[i].dead = TRUE;
-            animEnemyExplode( &enemies[i] );
-            if( enemies[i].sp.tid == ( 4 + 9 ) * 4 && enemies[i].dead ){
-                enemies[i].sp.hide();
-                enemies.erase( enemies.begin() + i );
-            }
+            enemies.erase( enemies.begin() + i );
         }else if( enemies[i].dead ){
             destroyEnemy( &enemies[i], &enemies, i );
         }else {
             enemies[i].sp.anim(14, 2);
-        }
-
-        if( enemies[i].damaged ){
-            enemies[i].sp.pal = 1;
-        }else {
-            enemies[i].sp.pal = 0;
         }
 
         enemies[i].update();
