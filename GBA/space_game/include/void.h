@@ -27,8 +27,8 @@
 #define addPIBB( val ) PAL_IN_BANK_BG += val;
 #define addPIBO( val ) PAL_IN_BANK_OBJ += val;
 
-#define loadBmp(name) memcpy(pal_bg_mem, name##Pal, name##PalLen); memcpy(vid_mem, name##Bitmap, name##BitmapLen);
-#define loadBmp16(name) memcpy16(vid_mem, name##Bitmap, name##BitmapLen/2);
+#define loadBmp(name) memcpy16(pal_bg_mem, name##_pal_bin, name##_pal_bin_size / 2); memcpy16(vid_mem, name##_img_bin, name##_img_bin_size / 2);
+#define loadBmp16(name) memcpy16(vid_mem, name##_img_bin, name##_img_bin_size / 2);
 
 #define loadTileObj( name, size ) \
     if( SPRITE_IN_VRAM_OBJ > 0 ){ \
@@ -199,7 +199,12 @@ class Map{
 /*         void fadeOut( u16 spd = 1 ); */
 /* }; */
 
-extern BOOL shaking;
+void updateFade(const COLOR *src_bg, const COLOR *src_obj, COLOR clr, u32 num_clrs);
+void fadeOut(u16 spd);
+void fadeIn(u16 spd);
+BOOL getFadeIsCompleted();
+
+extern BOOL shaking, fade_in_on, fade_out_on;
 
 void tte_write_str( std::string text );
 void nocash_puts_str( std::string text );

@@ -1,7 +1,5 @@
 #include "../include/game.h"
 
-extern u32 world_seconds;
-
 using namespace std;
 
 int spc0_y, ptx;
@@ -11,7 +9,6 @@ Sprite im;
 Sprite imf;
 
 void initGame(){
-    sqran(world_seconds);
     REG_DISPCNT = DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_BG2 | DCNT_OBJ_1D | DCNT_OBJ;
 
     loadPalBg(tileset_space);
@@ -26,6 +23,7 @@ void initGame(){
     imf.newSprite(55);
 
     spc0_y = 0;
+    REG_BG_OFS[1].y = 0;
 
     tte_init_chr4c(
             2, 
@@ -43,6 +41,8 @@ void initGame(){
     initHudPlayer();
     initGameOver();
     initSniper();
+
+    fadeOut(5);
 }
 
 void updateGame(){
@@ -78,12 +78,11 @@ void updateGame(){
     REG_BG_OFS[1].y = spc0_y * 3;
 
     updateShakeScreen();
-
+    updateFade(pal_game_bgPal, pal_gamePal, 0x0000, 16);
     updateVoid();
 }
 
 void endGame(){
-    /* tte_erase_screen(); */
     resetVoid();
     RegisterRamReset(RESET_PALETTE);
     RegisterRamReset(RESET_VRAM);
@@ -139,7 +138,6 @@ void updateHudPlayer(){
                 ATTR1_SIZE_8, 
                 ATTR2_BUILD(72, 0, 0) );
         obj_set_pos( spr, -( i - 1 ) * 9 + ( 8 * 7 ), SCREEN_HEIGHT - 12 );
-
     }
 
     obj_hide_multi( &OBJ_BUFFER[ 16 ], ABS( player.hp - MAX_HP_PLAYER ) );
@@ -235,10 +233,11 @@ void removeEnemies( Ship *t ){
 }
 
 void animEnemyExplode( Ship *t ){
+    vu16 _old_tid = t->sp.tid;
     if( t->dead ){
         if( t->sp.pal > 0 ) t->sp.pal = 0;
         if( t->dy != 0 ) t->dy = 0;
-        t->sp.anim(5, 9, 2);
+        if( _old_tid != ( 5 / 4 ) ) t->sp.anim(5, 9, 2);
     }
 }
 

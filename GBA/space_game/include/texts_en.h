@@ -3,6 +3,11 @@
 
 #include "options.h"
 
+// Demo
+#define EN_START_GAME_DEMO "Start Demo"
+#define EN_GAME_OVER_MSG_DEMO ""
+#define EN_PRESS_TO_RESET_DEMO ""
+
 #define EN_POINTS "Points: #{ci:14}" + to_string( p_points )
 #define EN_GAME_OVER "Game Over"
 #define EN_NEW_GAME "New game"

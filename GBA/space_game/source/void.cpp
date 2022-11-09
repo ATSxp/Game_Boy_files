@@ -328,42 +328,42 @@ void Map::setTile(int tx, int ty, u8 t){
     _dst[ y * w + x ] = _src[ y * w + x ];
 }
 
-// Class Fade ////////////////////////////////////////////
-/* Fade::Fade(const COLOR *src, COLOR clr, u32 num_clrs){ */
-/*     this->src = src; */
-/*     this->clr = clr; */
-/*     this->num_clrs = num_clrs; */
-/* } */
+u32 fade_alpha_d = 0, fade_alpha_value, fade_ticks = 0, fade_delay;
+BOOL fade_in_on = FALSE, fade_out_on = FALSE;
 
-/* void Fade::update(){ */
-/*     clr_fade(src, clr, pal_bg_mem, num_clrs, value); // Bgs */
-/*     clr_fade(src, clr, pal_obj_mem, num_clrs, value); // Objs */
+void updateFade(const COLOR *src_bg, const COLOR *src_obj, COLOR clr, u32 num_clrs){
+    if( src_bg  != NULL ) clr_fade(src_bg, clr, pal_bg_mem, num_clrs, fade_alpha_value);   // Bgs
+    if( src_obj != NULL ) clr_fade(src_obj, clr, pal_obj_mem, num_clrs, fade_alpha_value); // Objs
     
-/*     value = clamp(value + vel, 0, 32); */
-/* } */
+    if( fade_out_on && fade_alpha_value < 1 ){
+        fade_out_on = FALSE;
+    }else if( fade_in_on && fade_alpha_value > 31 ){
+        fade_in_on = FALSE;
+    }
 
-/* void Fade::fadeIn( u16 spd ){ */
-/*     value = 0; */
-/*     vel = spd; */
-/* } */
+    fade_ticks++;
 
-/* void Fade::fadeOut( u16 spd ){ */
-/*     value = 32; */
-/*     vel = -spd; */
-/* } */
+    if( fade_out_on || fade_in_on ){
+        if( fade_ticks % fade_delay == 0 ) fade_alpha_value = clamp(fade_alpha_value + fade_alpha_d, 0, 33);
+    }
+}
 
-/* u16 fade_alpha_value; */
-/* int fade_alpha_d; */
+void fadeOut(u16 spd){
+    if( !fade_in_on ){
+        fade_out_on = TRUE;
 
-/* void updateFade(const COLOR *src, COLOR clr, u32 num_clrs){ */
-/* } */
+        fade_alpha_value = 32;
+        fade_delay = spd;
+        fade_alpha_d = -1;
+    }
+}
 
-/* void fadeOut(u16 spd){ */
-/*     fade_alpha_value = 32; */
-/*     fade_alpha_d = -spd; */
-/* } */
+void fadeIn(u16 spd){
+    if( !fade_out_on ){
+        fade_in_on = TRUE;
 
-/* void fadeIn(u16 spd){ */
-/*     fade_alpha_value = 0; */
-/*     fade_alpha_d = spd; */
-/* } */
+        fade_alpha_value = 0;
+        fade_delay = spd;
+        fade_alpha_d = 1;
+    }
+}

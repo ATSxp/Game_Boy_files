@@ -3,6 +3,14 @@
 
 #include "options.h"
 
+// Demo
+#define PT_START_GAME_DEMO "Iniciar Demo"
+#define PT_GAME_OVER_MSG_DEMO "#{ci:247}Muito obrigado por ter jogado meu jogo! Após ter \n"\
+                              "chegado até aqui, a demo pode ter parecido pequena,\n"\
+                              "não? Mas saiba que novidades virão por aí.\n\n"\
+                              "Para mais informações acesse:#{ci:248} [coloque o itchio aqui]"
+#define PT_PRESS_TO_RESET_DEMO "#{ci:246}Aperte qualquer botão"
+
 #define PT_POINTS "Pontos: #{ci:14}" + to_string( p_points )
 #define PT_GAME_OVER "Fim de Jogo"
 #define PT_NEW_GAME "Novo jogo"

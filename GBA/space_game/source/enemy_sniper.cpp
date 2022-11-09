@@ -1,6 +1,6 @@
 #include "../include/enemy_sniper.h"
 
-u16 MAX_SNIPER_TIMER_SPAWN = 200, MAX_ORB_TIMER_SPAWN = 50, timer_to_spawn_sniper, timer_to_spawn_orb, check_slot_to_snipers, check_slot_to_orbs;
+u16 MAX_SNIPER_TIMER_SPAWN = 500, MAX_ORB_TIMER_SPAWN = 100, timer_to_spawn_sniper, timer_to_spawn_orb, check_slot_to_snipers, check_slot_to_orbs;
 vector<Ship>snipers, s_orbs;
 vu16 _rand_pos, _old_x, _old_y, _p_old_x, _p_old_y;
 BOOL s_ready;
@@ -9,15 +9,18 @@ void initSniper(){
     loadTileObj(spr_enemy_sniper, 16);
     loadTileObj(spr_projectile_for_sniper, 8);
 
+    SPRITE_TOTAL_OAM += 2;
+
     timer_to_spawn_sniper = MAX_SNIPER_TIMER_SPAWN;
     timer_to_spawn_orb = MAX_ORB_TIMER_SPAWN;
     
     check_slot_to_snipers = 0;
     check_slot_to_orbs = 0;
 
+    s_ready = FALSE;
+
     snipers.clear();
     s_orbs.clear();
-    SPRITE_TOTAL_OAM += 2;
 }
 
 void newSniper(){
@@ -94,7 +97,6 @@ void updateSniper(){
             s_ready = FALSE;
         }else {
             if( snipers[i].pos.y < player.pos.y ){
-                s_ready = TRUE;
                 snipers[i].sp.anim(39, 2);
             }else {
                 snipers[i].sp.tid = 156 + ( 4 * 2 );
@@ -102,6 +104,7 @@ void updateSniper(){
 
             if( snipers[i].pos.y < SCREEN_HEIGHT - _rand_pos ){
                 snipers[i].dy = 0;
+                if( snipers[i].dy == 0 ) s_ready = TRUE;
             }else {
                 snipers[i].dy = -snipers[i].spd;
             }

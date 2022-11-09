@@ -3,7 +3,7 @@
 Ship player( ( SCREEN_WIDTH - 16 ) / 2, SCREEN_HEIGHT, MAX_HP_PLAYER);
 std::vector< Ship > pb; // Player Bullets
 u16 MAX_PLAYER_TIMER_SHOOT = 12, p_imortality_timer;
-s16 player_timer_shoot, check_slot_bul, p_boost_bullets = 1, p_points = 0, p_mega_bullets = 1, p_potions = 1, p_multi_bullets = 1, p_imortal_item = 1;
+s16 player_timer_shoot, check_slot_bul, p_boost_bullets = 0, p_points = 0, p_mega_bullets = 0, p_potions = 0, p_multi_bullets = 0, p_imortal_item = 0;
 BOOL p_imortal, p_can_move;
 
 void initPlayer(){
@@ -162,7 +162,8 @@ void lifePlayer(){
 
     if( key_hit( KEY_B ) && p_potions > 0 && player.hp < MAX_HP_PLAYER && p_can_move ){
         p_potions--;
-        player.hp += qran_range(1, MAX_HP_PLAYER - 1 );
+        /* player.hp += qran_range(1, MAX_HP_PLAYER - 1 ); */
+        player.hp = MAX_HP_PLAYER;
     }
 }
 

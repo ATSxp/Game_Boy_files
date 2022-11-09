@@ -1,6 +1,6 @@
 #include "../include/options.h"
 
-u16 LANGUAGE = LANGUAGE_EN;
+u16 LANGUAGE = LANGUAGE_PTBR;
 
 int cursor_x, cursor_y;
 u16 gui_cursor = 0, cursor_space;

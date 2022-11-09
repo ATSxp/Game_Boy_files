@@ -10,6 +10,10 @@
 #include "enemy_sniper.h"
 #include "options.h"
 #include "game_over.h"
+#include "demo_menu.h"
+
+#include "../source/maps/pal_game_obj.h"
+#include "../source/maps/pal_game_bg.h"
 
 #include "../source/maps/space.h"
 #include "tileset_space_pal_bin.h"
